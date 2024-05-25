@@ -632,7 +632,7 @@ download_and_extract_rathole() {
         exit 1
     fi
     if [[ "$ARCH" == "x86_64" ]]; then
-    	DOWNLOAD_URL='https://github.com/ipmartnetwork/RatholeTunnel/raw/main/rathole.zip'
+    	DOWNLOAD_URL=$(curl -sSL https://api.github.com/repos/ipmartnetwork/rathole/releases/latest | grep -o "https://.*$ARCH.*linux.*zip" | head -n 1)
     fi
 
     if [ -z "$DOWNLOAD_URL" ]; then
