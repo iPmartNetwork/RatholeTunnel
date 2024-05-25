@@ -632,7 +632,7 @@ download_and_extract_rathole() {
         exit 1
     fi
     if [[ "$ARCH" == "x86_64" ]]; then
-    	DOWNLOAD_URL='https://github.com/Musixal/rathole-tunnel/raw/main/rathole.zip'
+    	DOWNLOAD_URL='https://github.com/ipmartnetwork/RatholeTunnel/raw/main/rathole.zip'
     fi
 
     if [ -z "$DOWNLOAD_URL" ]; then
