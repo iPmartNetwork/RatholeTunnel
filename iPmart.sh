@@ -632,7 +632,7 @@ download_and_extract_rathole() {
         exit 1
     fi
     if [[ "$ARCH" == "x86_64" ]]; then
-    	DOWNLOAD_URL=$(curl -sSL https://api.github.com/repos/rapiz1/rathole/releases/latest | grep -o "https://.*$ARCH.*linux.*zip" | head -n 1)
+    	DOWNLOAD_URL='https://github.com/Musixal/rathole-tunnel/raw/main/rathole.zip'
     fi
 
     if [ -z "$DOWNLOAD_URL" ]; then
@@ -671,13 +671,13 @@ display_menu() {
     display_rathole_core_status
     echo "-------------------------------"
     echo ''
-    echo -e "${Cyan}1. Configure tunnel${NC}"
-    echo -e "${White}2. Destroy tunnel${NC}"
-    echo -e "${Cyan}3. Check tunnel status${NC}"
-    echo -e "${White}4. Install Rathole Core"
-    echo -e "${Cyan}5. Restart services${NC}"
-    echo -e "${White}6. Add & remove cron-job reset timer"
-    echo -e "${Cyan}7. Exit"
+	echo -e "${White}1. Install Rathole Core"
+    echo -e "${Cyan}2. Configure tunnel${NC}"
+    echo -e "${White}3. Destroy tunnel${NC}"
+    echo -e "${Cyan}4. Check tunnel status${NC}"
+    echo -e "${White}5. Restart services${NC}"
+    echo -e "${Cyan}6. Add & remove cron-job reset timer"
+    echo -e "${White}7. Exit"
     echo ''
     echo "-------------------------------"
 }
@@ -686,10 +686,10 @@ display_menu() {
 read_option() {
     read -p "Enter your choice: " choice
     case $choice in
-        1) configure_tunnel ;;
-        2) destroy_tunnel ;;
-        3) check_tunnel_status ;;
-        4) download_and_extract_rathole ;;
+        1) download_and_extract_rathole ;;
+        2) configure_tunnel ;;
+        3) destroy_tunnel ;;
+        4) check_tunnel_status ;;
         5) restart_services ;;
         6) cronjob_main ;;
         7) exit 0 ;;
