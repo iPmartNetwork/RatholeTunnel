@@ -632,7 +632,7 @@ download_and_extract_rathole() {
         exit 1
     fi
     if [[ "$ARCH" == "x86_64" ]]; then
-    	DOWNLOAD_URL='https://api.github.com/repos/rapiz1/rathole/releases/latest'
+    	DOWNLOAD_URL='https://github.com/iPmartNetwork/RatholeTunnel/releases/download/v0.5.0/rathole-arm-unknown-linux-musleabi.zip'
     fi
 
     if [ -z "$DOWNLOAD_URL" ]; then
