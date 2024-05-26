@@ -5,7 +5,7 @@
   </p> 
 <p align="center">
 <h1 align="center"/>RatholeTunnel</h1>
-<h6 align="center">تانل معکوس رتول پروکسی <h6>
+<h6 align="center">تانل معکوس رتهول پروکسی <h6>
 </p>
 
 <p align="center">
