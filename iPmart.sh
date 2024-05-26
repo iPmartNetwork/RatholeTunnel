@@ -632,7 +632,7 @@ download_and_extract_rathole() {
         exit 1
     fi
     if [[ "$ARCH" == "x86_64" ]]; then
-    	DOWNLOAD_URL='https://github.com/rapiz1/rathole/releases
+    	DOWNLOAD_URL='https://api.github.com/repos/rapiz1/rathole/releases/latest'
     fi
 
     if [ -z "$DOWNLOAD_URL" ]; then
