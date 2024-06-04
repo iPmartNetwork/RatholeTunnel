@@ -48,7 +48,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/ma
 
 
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/main/test3.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/main/test2.sh)
 
 ```
 
