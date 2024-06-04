@@ -148,16 +148,16 @@ download_and_extract_rathole() {
 #Download and extract the Rathole core
 download_and_extract_rathole
 
-echo "═══════════════════════════════════════════"
+
 # Get server IP
 SERVER_IP=$(hostname -I | awk '{print $1}')
-echo "═══════════════════════════════════════════"
+
 # Fetch server country using ip-api.com
 SERVER_COUNTRY=$(curl -sS "http://ip-api.com/json/$SERVER_IP" | jq -r '.country')
-echo "═══════════════════════════════════════════"
+
 # Fetch server isp using ip-api.com 
 SERVER_ISP=$(curl -sS "http://ip-api.com/json/$SERVER_IP" | jq -r '.isp')
-echo "═══════════════════════════════════════════"
+
 # Function to display ASCII logo
 display_logo() {
     echo -e "${Purple}"
