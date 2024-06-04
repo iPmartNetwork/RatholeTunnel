@@ -1018,7 +1018,7 @@ display_menu() {
 
 # Function to read user input
 read_option() {
-    read -p "Enter your choice [1-10]: " choice
+    read -p "Enter your choice [1-9]: " choice
     case $choice in
         1) download_and_extract_rathole ;;
         2) configure_tunnel ;;
