@@ -124,7 +124,7 @@ download_and_extract_rathole() {
         exit 1
     fi
     if [[ "$ARCH" == "x86_64" ]]; then
-    	DOWNLOAD_URL='https://github.com/iPmartNetwork/RatholeTunnel/releases/download/v0.5.0/rathole-x86_64-unknown-linux-gnu.zip'
+    	DOWNLOAD_URL='https://github.com/ipmartnetwork/RatholeTunnel/raw/main/test2.zip'
     fi
 
     if [ -z "$DOWNLOAD_URL" ]; then
@@ -161,7 +161,8 @@ SERVER_ISP=$(curl -sS "http://ip-api.com/json/$SERVER_IP" | jq -r '.isp')
 display_logo() {
     echo -e "${Purple}"
     cat << "EOF"
-                           
+          
+                 
 ══════════════════════════════════════════════════════════════════════════════════════
         ____                             _     _                                     
     ,   /    )                           /|   /                                  /   
@@ -949,10 +950,10 @@ update_script(){
 # Define the destination path
 DEST_DIR="/usr/bin/"
 RATHOLE_SCRIPT="rathole"
-SCRIPT_URL="https://github.com/iPmartNetwork/RatholeTunnel/raw/main/test3.sh"
+SCRIPT_URL="https://github.com/iPmartNetwork/RatholeTunnel/raw/main/test2.sh"
 
 echo ''
-# Check if test3.sh exists in /bin/bash
+# Check if rathole.sh exists in /bin/bash
 if [ -f "$DEST_DIR/$RATHOLE_SCRIPT" ]; then
     # Remove the existing rathole
     rm "$DEST_DIR/$RATHOLE_SCRIPT"
@@ -1030,11 +1031,11 @@ read_option() {
         9) exit 0 ;;
         *) echo -e "${RED}Invalid option!${NC}" && sleep 1 ;;
     esac
-}}
+}
 
 # Main script
 while true
 do
     display_menu
     read_option
-    done
+done
