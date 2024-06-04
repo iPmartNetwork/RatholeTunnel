@@ -161,8 +161,7 @@ SERVER_ISP=$(curl -sS "http://ip-api.com/json/$SERVER_IP" | jq -r '.isp')
 display_logo() {
     echo -e "${Purple}"
     cat << "EOF"
-          
-                 
+                           
 ══════════════════════════════════════════════════════════════════════════════════════
         ____                             _     _                                     
     ,   /    )                           /|   /                                  /   
@@ -1038,4 +1037,4 @@ while true
 do
     display_menu
     read_option
-done
+    done
