@@ -729,19 +729,19 @@ add_cron_job_menu() {
     # Prompt user to choose a restart time interval
     echo "Select the restart time interval:"
     echo ''
-    echo "1. Every 5 min"
-    echo "2. Every 10 min"
-    echo "3. Every 15 min"
-    echo "4. Every 20 min"
-    echo "5. Every 25 min"
-    echo "6. Every 30 min"
-    echo "7. Every 1 hour"
-    echo "8. Every 2 hours"
-    echo "9. Every 4 hours"
+    echo "1.  Every 5 min"
+    echo "2.  Every 10 min"
+    echo "3.  Every 15 min"
+    echo "4.  Every 20 min"
+    echo "5.  Every 25 min"
+    echo "6.  Every 30 min"
+    echo "7.  Every 1 hour"
+    echo "8.  Every 2 hours"
+    echo "9.  Every 4 hours"
     echo "10. Every 6 hours"
     echo "11. Every 12 hours"
     echo "12. Every 24 hours"
-    echo ''
+    echo '''
     read -p "Enter your choice: " time_choice
     echo ''
     # Validate user input for restart time interval
