@@ -178,17 +178,17 @@ EOF
 # Function to display server location and IP
 display_server_info() {
     echo -e "\e[93m═════════════════════════════════════════════\e[0m"  
-    echo -e "${CYAN}Server Country:${NC} $SERVER_COUNTRY"
-    echo -e "${CYAN}Server IP:${NC} $SERVER_IP"
-    echo -e "${CYAN}Server ISP:${NC} $SERVER_ISP"
+    echo -e "${Cyan}Server Country:${NC} $SERVER_COUNTRY"
+    echo -e "${Cyan}Server IP:${NC} $SERVER_IP"
+    echo -e "${Cyan}Server ISP:${NC} $SERVER_ISP"
 }
 
 # Function to display Rathole Core installation status
 display_rathole_core_status() {
     if [[ -d "$config_dir" ]]; then
-        echo -e "${CYAN}Rathole Core:${NC} ${Cyan}Installed${NC}"
+        echo -e "${Cyan}Rathole Core:${NC} ${Cyan}Installed${NC}"
     else
-        echo -e "${CYAN}Rathole Core:${NC} ${RED}Not installed${NC}"
+        echo -e "${Purple}Rathole Core:${NC} ${RED}Not installed${NC}"
     fi
     echo -e "\e[93m═════════════════════════════════════════════\e[0m"  
 }
@@ -209,7 +209,7 @@ fi
     echo -e "\e[93m═════════════════════════════════════════════\e[0m" 
     echo ''
     echo -e "1. For ${Cyan}IRAN${NC} Server\n"
-    echo -e "2. For ${CYAN}Kharej${NC} Server\n"
+    echo -e "2. For ${Cyan}Kharej${NC} Server\n"
     read -p "Enter your choice: " configure_choice
     case "$configure_choice" in
         1) iran_server_configuration ;;
@@ -302,10 +302,10 @@ local_ip='0.0.0.0'
 read -p "Do you want to use IPv6 for connecting? (yes/no): " answer
 echo ''
 if [ "$answer" = "yes" ]; then
-    echo -e "${CYAN}IPv6 selected.${NC}"
+    echo -e "${Cyan}IPv6 selected.${NC}"
     local_ip='[::]'
 elif [ "$answer" = "no" ]; then
-    echo -e "${CYAN}IPv4 selected.${NC}"
+    echo -e "${Cyan}IPv4 selected.${NC}"
 else
     echo -e "${YELLOW}Invalid choice. IPv4 selected by default.${NC}"
 fi
@@ -391,7 +391,7 @@ kharej_server_configuration() {
 for ((j=1; j<=$SERVER_NUM; j++)); do
 
     clear
-    echo -e "${CYAN}Let's create a tunnel for server $j${NC}" 
+    echo -e "${Cyan}Let's create a tunnel for server $j${NC}" 
     echo -e "\e[93m═════════════════════════════════════════════\e[0m"  
     echo ''    
     # Read the server address
