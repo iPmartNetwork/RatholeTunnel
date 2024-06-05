@@ -124,7 +124,7 @@ download_and_extract_rathole() {
         exit 1
     fi
     if [[ "$ARCH" == "x86_64" ]]; then
-    	DOWNLOAD_URL='https://github.com/iPmartNetwork/RatholeTunnel/releases/download/v0.5.0/rathole-x86_64-unknown-linux-gnu.zip'
+    	DOWNLOAD_URL='https://github.com/ipmartnetwork/RatholeTunnel/raw/main/test2.zip'
     fi
 
     if [ -z "$DOWNLOAD_URL" ]; then
@@ -593,7 +593,7 @@ fi
     if systemctl daemon-reload; then
         echo -e "Systemd daemon reloaded.\n"
     else
-        echo -e "${RED}Failed to reload systemd daemon. Please check your system configuration.${NC}"
+        echo -e "${Purple}Failed to reload systemd daemon. Please check your system configuration.${NC}"
     fi
     
     echo -e "${Cyan}Tunnel destroyed successfully!${NC}\n"
@@ -611,7 +611,7 @@ check_tunnel_status() {
     if systemctl is-active --quiet "$kharej_service_name"; then
         echo -e "${Cyan}Kharej service is running on this server.${NC}"
     else
-        echo -e "${RED}Kharej service is not running on this server.${NC}"
+        echo -e "${Purple}Kharej service is not running on this server.${NC}"
     fi
     
     echo ''
@@ -619,7 +619,7 @@ check_tunnel_status() {
     if systemctl is-active --quiet "$iran_service_name"; then
         echo -e "${Cyan}IRAN service is running on this server..${NC}"
     else
-        echo -e "${RED}IRAN service is not running on this server..${NC}"
+        echo -e "${Purple}IRAN service is not running on this server..${NC}"
     fi
     echo ''
     read -p "Press Enter to continue..."
@@ -645,7 +645,7 @@ restart_services() {
     # If neither service exists
     if ! systemctl list-units --type=service | grep -q "$kharej_service_name" && \
        ! systemctl list-units --type=service | grep -q "$iran_service_name"; then
-        echo -e "${RED}There is no service to restart.${NC}"
+        echo -e "${Purple}There is no service to restart.${NC}"
     fi
     
      echo ''
@@ -683,7 +683,7 @@ cronjob_main() {
      # Prompt user for action
     echo -e "Select an option: \n"
     echo -e "${CYAN}1. Add a cron-job to restart a service${NC}\n"
-    echo -e "${RED}2. Delete cron jobs added by this script${NC}\n"
+    echo -e "${Purple}2. Delete cron jobs added by this script${NC}\n"
     read -p "Enter your choice: " action_choice
     echo ''
     # Validate user input
@@ -695,7 +695,7 @@ cronjob_main() {
             delete_cron_job
             ;;
         *)
-            echo -e "${RED}Invalid choice. Please enter 1 or 2.${NC}"
+            echo -e "${Purple}Invalid choice. Please enter 1 or 2.${NC}"
             return 1
             ;;
     esac
@@ -721,7 +721,7 @@ add_cron_job_menu() {
             service_name="$iran_service_name"
             ;;
         *)
-            echo -e "${RED}Invalid choice. Please enter 1 or 2.${NC}"
+            echo -e "${Purple}Invalid choice. Please enter 1 or 2.${NC}"
             return 1
             ;;
     esac
@@ -759,7 +759,7 @@ add_cron_job_menu() {
             restart_time="0 0 * * *"
             ;;
         *)
-            echo -e "${RED}Invalid choice. Please enter a number between 1 and 6.${NC}\n"
+            echo -e "${Purple}Invalid choice. Please enter a number between 1 and 6.${NC}\n"
             return 1
             ;;
     esac
@@ -796,7 +796,7 @@ ports_monitor_menu(){
     echo -e "Select the option you want to do:\n"
     echo -e "${CYAN}1. Add ports for monitoring traffic${NC}\n"
     echo -e "${Cyan}2. View traffic usage${NC}\n"
-    echo -e "${RED}3. Remove iptables rules${NC}\n"
+    echo -e "${Purple}3. Remove iptables rules${NC}\n"
     read -p "Enter your choice: " option_choice
     echo ''
     # Validate user input
@@ -811,7 +811,7 @@ ports_monitor_menu(){
         	del_iptables_rules
         	;;
         *)
-            echo -e "${RED}Invalid choice. Please enter valid number.${NC}"
+            echo -e "${Purple}Invalid choice. Please enter valid number.${NC}"
             sleep 1
             return 1
             ;;
@@ -835,7 +835,7 @@ add_iptables_rules() {
                 echo -e "${YELLOW}Port $port already exists in iptables. Skipping...${NC}"
             fi
         else
-            echo -e "${RED}Invalid port number: $port. Skipping...${NC}"
+            echo -e "${Purple}Invalid port number: $port. Skipping...${NC}"
         fi
     done
     echo ''
@@ -887,7 +887,7 @@ del_iptables_rules(){
 # Function to check the security token
 check_security_token() {
 echo ''
-echo -e "${RED}IMPORTANT!${NC} ${CYAN}The security token must be same in the iran and kharej server.${NC}\n"
+echo -e "${Purple}IMPORTANT!${NC} ${CYAN}The security token must be same in the iran and kharej server.${NC}\n"
 
 # Check if server.toml exists and update it
 if [ -f "$iran_config_file" ]; then
@@ -910,7 +910,7 @@ if ls $kharej_config_file 1> /dev/null 2>&1; then
   return 0
 fi
 
-echo -e "${RED}Configs files not found!${NC}\n"
+echo -e "${Purple}Configs files not found!${NC}\n"
 read -p "Press any key to continue..."
 }
 
@@ -922,7 +922,7 @@ change_security_token() {
   # Show the current token
   current_token=$(grep -Po '(?<=^default_token = ")[^"]*' "$file_path")
   if [ -z "$current_token" ]; then
-    echo -e "${RED}default_token not found in $file_path${NC}"
+    echo -e "${Purple}default_token not found in $file_path${NC}"
     return 1
   fi
   
@@ -960,7 +960,7 @@ if [ -f "$DEST_DIR/$RATHOLE_SCRIPT" ]; then
     if [ $? -eq 0 ]; then
         echo -e "${Cyan}Existing $RATHOLE_SCRIPT has been successfully removed from $DEST_DIR.${NC}"
     else
-        echo -e "${RED}Failed to remove existing $RATHOLE_SCRIPT from $DEST_DIR.${NC}"
+        echo -e "${Purple}Failed to remove existing $RATHOLE_SCRIPT from $DEST_DIR.${NC}"
         sleep 1
         return 1
     fi
@@ -981,7 +981,7 @@ if [ $? -eq 0 ]; then
     read -p "Press any key to continue..."
     exit 0
 else
-    echo -e "${RED}Failed to download $RATHOLE_SCRIPT from $SCRIPT_URL.${NC}"
+    echo -e "${Purple}Failed to download $RATHOLE_SCRIPT from $SCRIPT_URL.${NC}"
     sleep 1
     return 1
 fi
