@@ -52,6 +52,12 @@ bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/ma
 
 ```
 
+
+```
+bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/main/alpha.sh)
+
+```
+
 <p align="center">_____________________________________________________________________________________
 
 
