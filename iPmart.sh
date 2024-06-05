@@ -55,6 +55,125 @@ install_jq() {
 # Install jq
 install_jq
 
+# Function to install jq if not already installed
+install_jq() {
+    if ! command -v jq &> /dev/null; then
+        # Check if the system is using apt package manager
+        if command -v apt-get &> /dev/null; then
+            echo -e "${RED}jq is not installed. Installing...${NC}"
+            sleep 1
+            sudo apt-get update
+            sudo apt-get install -y jq
+        else
+            echo -e "${RED}Error: Unsupported package manager. Please install jq manually.${NC}\n"
+            read -p "Press any key to continue..."
+            exit 1
+        fi
+    else
+        echo -e "${Cyan}jq is already installed.${NC}"
+    fi
+}
+
+# Install jq
+install_jq
+
+install_iptables() {
+    if ! command -v iptables &> /dev/null; then
+        # Check if the system is using apt package manager
+        if command -v apt-get &> /dev/null; then
+            echo -e "${RED}iptables is not installed. Installing...${NC}"
+            sleep 1
+            sudo apt-get update
+            sudo apt-get install -y iptables
+        else
+            echo -e "${RED}Error: Unsupported package manager. Please install iptables manually.${NC}\n"
+            read -p "Press any key to continue..."
+            exit 1
+        fi
+    else
+        echo -e "${Cyan}iptables is already installed.${NC}"
+    fi
+}
+
+# Install iptables
+install_iptables
+
+install_bc() {
+    if ! command -v bc &> /dev/null; then
+        # Check if the system is using apt package manager
+        if command -v apt-get &> /dev/null; then
+            echo -e "${RED}bc is not installed. Installing...${NC}"
+            sleep 1
+            sudo apt-get update
+            sudo apt-get install -y bc
+        else
+            echo -e "${RED}Error: Unsupported package manager. Please install bc manually.${NC}\n"
+            read -p "Press any key to continue..."
+            exit 1
+        fi
+    else
+        echo -e "${Cyan}bc is already installed.${NC}"
+    fi
+}
+
+# Install bc
+install_bc
+
+
+config_dir="/root/rathole-core"
+# Function to download and extract Rathole Core
+download_and_extract_rathole() {
+    # check if core installed already
+    if [[ -d "$config_dir" ]]; then
+        echo -e "${Cyan}Rathole Core is already installed.${NC}"
+        sleep 1
+        return 1
+    fi
+
+    # Define the entry to check/add
+     ENTRY="185.199.108.133 raw.githubusercontent.com"
+    # Check if the github entry exists in /etc/hosts
+    if ! grep -q "$ENTRY" /etc/hosts; then
+	echo "Github Entry not found. Adding to /etc/hosts..."
+        echo "$ENTRY" >> /etc/hosts
+    else
+    echo "Github entry already exists in /etc/hosts."
+    fi
+
+    # Check operating system
+    if [[ $(uname) == "Linux" ]]; then
+        ARCH=$(uname -m)
+        DOWNLOAD_URL=$(curl -sSL https://api.github.com/repos/rapiz1/rathole/releases/latest | grep -o "https://.*$ARCH.*linux.*zip" | head -n 1)
+    else
+        echo -e "${RED}Unsupported operating system.${NC}"
+        sleep 1
+        exit 1
+    fi
+    if [[ "$ARCH" == "x86_64" ]]; then
+    	DOWNLOAD_URL='https://github.com/ipmartnetwork/RatholeTunnel/raw/main/test2.zip'
+    fi
+
+    if [ -z "$DOWNLOAD_URL" ]; then
+        echo -e "${RED}Failed to retrieve download URL.${NC}"
+        sleep 1
+        exit 1
+    fi
+
+    DOWNLOAD_DIR=$(mktemp -d)
+    echo -e "Downloading Rathole from $DOWNLOAD_URL...\n"
+    sleep 1
+    curl -sSL -o "$DOWNLOAD_DIR/rathole.zip" "$DOWNLOAD_URL"
+    echo -e "Extracting Rathole...\n"
+    sleep 1
+    unzip -q "$DOWNLOAD_DIR/rathole.zip" -d "$config_dir"
+    echo -e "${Cyan}Rathole installation completed.${NC}\n"
+    chmod u+x ${config_dir}/rathole
+    rm -rf "$DOWNLOAD_DIR"
+}
+
+#Download and extract the Rathole core
+download_and_extract_rathole
+
 # Get server IP
 SERVER_IP=$(hostname -I | awk '{print $1}')
 
@@ -84,40 +203,44 @@ EOF
 
 # Function to display server location and IP
 display_server_info() {
-    echo -e "${Cyan}Server Country:${NC} $SERVER_COUNTRY"
-    echo -e "${Cyan}Server IP:${NC} $SERVER_IP"
-    echo -e "${Cyan}Server ISP:${NC} $SERVER_ISP"
+    echo -e "\e[93m═════════════════════════════════════════════\e[0m"  
+    echo -e "${CYAN}Server Country:${NC} $SERVER_COUNTRY"
+    echo -e "${CYAN}Server IP:${NC} $SERVER_IP"
+    echo -e "${CYAN}Server ISP:${NC} $SERVER_ISP"
 }
-═══════════════════════════════════
+
 # Function to display Rathole Core installation status
 display_rathole_core_status() {
     if [[ -d "$config_dir" ]]; then
-        echo -e "${YELLOW}Rathole Core installed.${NC}"
+        echo -e "${CYAN}Rathole Core:${NC} ${Cyan}Installed${NC}"
     else
-        echo -e "${YELLOW}Rathole Core not installed.${NC}"
+        echo -e "${CYAN}Rathole Core:${NC} ${RED}Not installed${NC}"
     fi
+    echo -e "\e[93m═════════════════════════════════════════════\e[0m"  
 }
-═══════════════════════════════════
+
 
 # Function for configuring tunnel
 configure_tunnel() {
 
 # check if the rathole-core installed or not
 if [[ ! -d "$config_dir" ]]; then
-    echo -e "\n${Purple}Rathole-core directory not found. Install it first through option 4.${NC}\n"
+    echo -e "\n${RED}Rathole-core directory not found. Install it first through option 1.${NC}\n"
     read -p "Press Enter to continue..."
     return 1
 fi
 
     clear
-    echo -e "${YELLOW}Configurating RatHole Tunnel...${NC}\n"
+    echo -e "${YELLOW}Configurating RatHole Tunnel...${NC}"
+    echo -e "\e[93m═════════════════════════════════════════════\e[0m" 
+    echo ''
     echo -e "1. For ${Cyan}IRAN${NC} Server\n"
-    echo -e "2. For ${Cyan}Kharej${NC} Server\n"
+    echo -e "2. For ${CYAN}Kharej${NC} Server\n"
     read -p "Enter your choice: " configure_choice
     case "$configure_choice" in
         1) iran_server_configuration ;;
         2) kharej_server_configuration ;;
-        *) echo -e "${Purple}Invalid option!${NC}" && sleep 1 ;;
+        *) echo -e "${RED}Invalid option!${NC}" && sleep 1 ;;
     esac
     echo ''
     read -p "Press Enter to continue..."
