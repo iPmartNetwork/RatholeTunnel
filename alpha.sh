@@ -741,7 +741,7 @@ add_cron_job_menu() {
     echo "10. Every 6 hours"
     echo "11. Every 12 hours"
     echo "12. Every 24 hours"
-    echo '''
+    echo ''
     read -p "Enter your choice: " time_choice
     echo ''
     # Validate user input for restart time interval
