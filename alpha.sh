@@ -785,7 +785,7 @@ add_cron_job_menu() {
             restart_time="0 0 * * *"
             ;;
         *)
-            echo -e "${Purple}Invalid choice. Please enter a number between 1 and 6.${NC}\n"
+            echo -e "${Purple}Invalid choice. Please enter a number between 1 and 12.${NC}\n"
             return 1
             ;;
     esac
