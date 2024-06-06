@@ -35,14 +35,7 @@
 
 
 
-
-```
-bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/main/iPmart.sh)
-
-```
-
-
-## نسخه آزمایشی
+## نسخه پیشنهادی
 
 
 
@@ -51,6 +44,15 @@ bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/ma
 bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/main/alpha.sh)
 
 ```
+
+## نسخه قدیمی 
+
+```
+bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/main/iPmart.sh)
+
+```
+
+
 
 <p align="center">_____________________________________________________________________________________
 
