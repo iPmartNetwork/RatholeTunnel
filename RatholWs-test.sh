@@ -466,7 +466,14 @@ heartbeat_timeout = 40
 retry_interval = 1
 
 [client.transport]
+[server.transport]
 type = "tcp"
+
+[server.transport]
+type = "ws"
+
+[server.transport]
+type = "udp"
 
 EOF
 
