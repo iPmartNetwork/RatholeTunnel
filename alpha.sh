@@ -1038,7 +1038,7 @@ display_menu() {
     echo -e "${Cyan}6. Add & remove cron-job reset timer"
     echo -e "${White}7. Port traffic monitoring"
     echo -e "${Cyan}8. update_script"
-    echo -e "${White}9. exit 0"
+    echo -e "${White}9. Exit"
     echo ''
     echo "-------------------------------"
 }
