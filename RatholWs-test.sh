@@ -469,10 +469,10 @@ retry_interval = 1
 type = "tcp"
 
 [client.transport]
-type = "ws"
+type = "udp"
 
 [client.transport]
-type = "udp"
+type = "ws"
 
 EOF
 
