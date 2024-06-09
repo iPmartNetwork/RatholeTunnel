@@ -52,7 +52,12 @@ bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/ma
 
 ```
 
+## تست ws
 
+```
+bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/main/RatholWS-test.sh)
+
+```
 
 <p align="center">_____________________________________________________________________________________
 
