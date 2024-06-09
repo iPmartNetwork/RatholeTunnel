@@ -291,7 +291,7 @@ while [[ "$transport" != "tcp" && "$transport" != "udp" && "$transport" != "ws" 
 
     # Check if the input is either tcp or udp
     if [[ "$transport" != "tcp" && "$transport" != "udp" && "$transport" != "ws" ]]; then
-        echo -e "${RED}Invalid transport type. Please enter 'tcp' or 'udp' ' or 'ws'.${NC}"
+        echo -e "${RED}Invalid transport type. Please enter 'tcp' or 'udp' or 'ws'.${NC}"
     fi
 done
 
@@ -433,7 +433,7 @@ for ((j=1; j<=$SERVER_NUM; j++)); do
     # Prompt the user to input transport type
     read -p "Enter transport type (tcp/udp/ws): " transport
 
-    # Check if the input is either tcp or udp
+    # Check if the input is either tcp or udp or ws
     if [[ "$transport" != "tcp" && "$transport" != "udp" && "$transport" != "ws" ]]; then
         echo -e "${RED}Invalid transport type. Please enter 'tcp' or 'udp' or 'ws'.${NC}"
     fi
