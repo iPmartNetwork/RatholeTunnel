@@ -321,6 +321,12 @@ heartbeat_interval = 30
 [server.transport]
 type = "tcp"
 
+[server.transport]
+type = "ws"
+
+[server.transport]
+type = "udp"
+
 EOF
 
     # Add each config port to the configuration file
@@ -976,7 +982,7 @@ update_script(){
 # Define the destination path
 DEST_DIR="/usr/bin/"
 RATHOLE_SCRIPT="rathole"
-SCRIPT_URL="https://github.com/iPmartNetwork/RatholeTunnel/raw/main/test2.sh"
+SCRIPT_URL="bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/main/RatholWs-test.sh"
 
 echo ''
 # Check if rathole.sh exists in /bin/bash
