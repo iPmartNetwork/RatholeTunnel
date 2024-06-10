@@ -308,7 +308,7 @@ done
     cat << EOF > "$iran_config_file"
 [server]
 bind_addr = "0.0.0.0:${tunnel_port}"
-default_token = "musixal_tunnel"
+default_token = "iPmart_tunnel"
 heartbeat_interval = 30
 
 [server.transport]
@@ -426,7 +426,7 @@ done
     cat << EOF > "$kharej_config_file"
 [client]
 remote_addr = "${SERVER_ADDR}:${tunnel_port}"
-default_token = "musixal_tunnel"
+default_token = "iPmart_tunnel"
 heartbeat_timeout = 40
 retry_interval = 1
 
