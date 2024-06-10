@@ -1021,24 +1021,24 @@ display_menu() {
     clear
     display_logo
     display_server_info
-    echo "-------------------------------"
     display_rathole_core_status
-    echo "-------------------------------"
     echo ''
-	echo -e "${White}1. Install Rathole Core"
+    echo -e "${White}1. Install Rathole Core${NC}"
     echo -e "${Cyan}2. Configure tunnel${NC}"
     echo -e "${White}3. Destroy tunnel${NC}"
     echo -e "${Cyan}4. Check tunnel status${NC}"
     echo -e "${White}5. Restart services${NC}"
     echo -e "${Cyan}6. Add & remove cron-job reset timer"
-    echo -e "${White}7. Exit"
+    echo -e "${White}7. Port traffic monitoring"
+    echo -e "${Cyan}8. update_script"
+    echo -e "${White}9. Exit"
     echo ''
     echo "-------------------------------"
 }
 
 # Function to read user input
 read_option() {
-    read -p "Enter your choice: " choice
+    read -p "Enter your choice [1-9]: " choice
     case $choice in
         1) download_and_extract_rathole ;;
         2) configure_tunnel ;;
@@ -1046,7 +1046,9 @@ read_option() {
         4) check_tunnel_status ;;
         5) restart_services ;;
         6) cronjob_main ;;
-        7) exit 0 ;;
+        7) ports_monitor_menu ;;
+        8) update_script ;;
+        9) exit 0 ;;
         *) echo -e "${Purple}Invalid option!${NC}" && sleep 1 ;;
     esac
 }
