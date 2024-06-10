@@ -192,7 +192,7 @@ configure_tunnel() {
 
 # check if the rathole-core installed or not
 if [[ ! -d "$config_dir" ]]; then
-    echo -e "\n${Purple}Rathole-core directory not found. Install it first through option 8.${NC}\n"
+    echo -e "\n${Purple}Rathole-core directory not found. Install it first through option 1.${NC}\n"
     read -p "Press Enter to continue..."
     return 1
 fi
