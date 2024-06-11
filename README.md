@@ -55,7 +55,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/ma
 ## تست ws
 
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/main/wstest.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/main/RatholWs-test.sh)
 
 ```
 
