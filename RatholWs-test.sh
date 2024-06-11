@@ -202,7 +202,7 @@ fi
     echo -e "\e[93m═════════════════════════════════════════════\e[0m" 
     echo ''
     echo -e "1. For ${Cyan}IRAN${NC} Server\n"
-    echo -e "2. For ${CYAN}Kharej${NC} Server\n"
+    echo -e "2. For ${Cyan}Kharej${NC} Server\n"
     read -p "Enter your choice: " configure_choice
     case "$configure_choice" in
         1) iran_server_configuration ;;
