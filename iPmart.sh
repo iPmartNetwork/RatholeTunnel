@@ -293,7 +293,7 @@ echo ''
 local nodelay=""
 # Keep prompting the user until a valid input is provided
 while [[ "$nodelay" != "true" && "$nodelay" != "false" ]]; do
-    read -p "TCP No-Delay (true / false): " nodelay
+    read -p "TCP No-Delay (true${Cyan} / false${Purple}): " nodelay
     if [[ "$nodelay" != "true" && "$nodelay" != "false" ]]; then
         echo -e "${Purple}Invalid nodelay input. Please enter 'true' or 'false'.${NC}"
     fi
@@ -306,10 +306,10 @@ local_ip='0.0.0.0'
 read -p "Do you want to use IPv6 for connecting? (yes/no): " answer
 echo ''
 if [ "$answer" = "yes" ]; then
-    echo -e "${CYAN}IPv6 selected.${NC}"
+    echo -e "${Cyan}IPv6 selected.${NC}"
     local_ip='[::]'
 elif [ "$answer" = "no" ]; then
-    echo -e "${CYAN}IPv4 selected.${NC}"
+    echo -e "${Cyan}IPv4 selected.${NC}"
 else
     echo -e "${YELLOW}Invalid choice. IPv4 selected by default.${NC}"
 fi
@@ -398,7 +398,7 @@ kharej_server_configuration() {
 for ((j=1; j<=$SERVER_NUM; j++)); do
 
     clear
-    echo -e "${CYAN}Let's create a tunnel for server $j${NC}" 
+    echo -e "${Cyan}Let's create a tunnel for server $j${NC}" 
     echo -e "\e[93m═════════════════════════════════════════════\e[0m"  
     echo ''    
     # Read the server address
@@ -1038,6 +1038,7 @@ fi
 # Color codes
 Purple='\033[0;35m'
 Cyan='\033[0;36m'
+CYAN='\033[0;36m'
 YELLOW='\033[0;33m'
 White='\033[0;96m'
 NC='\033[0m' # No Color 
