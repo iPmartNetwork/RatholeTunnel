@@ -91,7 +91,7 @@ config_dir="/root/rathole-core"
 download_and_extract_rathole() {
     # check if core installed already
     if [[ -d "$config_dir" ]]; then
-        echo -e "${GREEN}Rathole Core is already installed.${NC}"
+        echo -e "${Cyan}Rathole Core is already installed.${NC}"
         sleep 1
         return 1
     fi
@@ -132,7 +132,7 @@ download_and_extract_rathole() {
     echo -e "Extracting Rathole...\n"
     sleep 1
     unzip -q "$DOWNLOAD_DIR/rathole.zip" -d "$config_dir"
-    echo -e "${GREEN}Rathole installation completed.${NC}\n"
+    echo -e "${Cyan}Rathole installation completed.${NC}\n"
     chmod u+x ${config_dir}/rathole
     rm -rf "$DOWNLOAD_DIR"
 }
@@ -215,12 +215,12 @@ fi
 
 
 #Global Variables
+     config_dir="/root/rathole-core"
      iran_config_file="${config_dir}/server.toml"
      iran_service_name="rathole-iran.service"
      iran_service_file="/etc/systemd/system/${iran_service_name}"
 
-   
-    kharej_config_file="${config_dir}/client*.toml"
+    kharej_config_file="${config_dir}/client.toml"
     kharej_service_name="rathole-kharej.service"
     kharej_service_file="/etc/systemd/system/${kharej_service_name}"
     
@@ -278,13 +278,13 @@ echo ''
 local transport=""
 
 # Keep prompting the user until a valid input is provided
-while [[ "$transport" != "tcp" && "$transport" != "udp" && "$transport" != "ws" ]]; do
+while [[ "$transport" != "tcp" && "$transport" != "udp" ]]; do
     # Prompt the user to input transport type
-    read -p "Enter transport type (tcp/udp/ws): " transport
+    read -p "Enter transport type (tcp/udp): " transport
 
     # Check if the input is either tcp or udp
-    if [[ "$transport" != "tcp" && "$transport" != "udp" && "$transport" != "ws" ]]; then
-        echo -e "${Purple}Invalid transport type. Please enter 'tcp' or 'udp' or 'ws'.${NC}"
+    if [[ "$transport" != "tcp" && "$transport" != "udp" ]]; then
+        echo -e "${Purple}Invalid transport type. Please enter 'tcp' or 'udp'.${NC}"
     fi
 done
 
@@ -341,7 +341,7 @@ EOF
     done
     
     echo ''
-    echo -e "${GREEN}IRAN server configuration completed.${NC}\n"
+    echo -e "${Cyan}IRAN server configuration completed.${NC}\n"
     echo -e "Starting Rathole server as a service...\n"
 
     # Create the systemd service unit file
@@ -369,8 +369,8 @@ EOF
     fi
 
     # Enable the service to start on boot
-    if systemctl enable "$iran_service_name" >/dev/null 2>&1; then
-        echo -e "${GREEN}Service '$iran_service_name' enabled to start on boot.${NC}"
+    if systemctl enable "$iran_service_name"; then
+        echo -e "${Cyan}Service '$iran_service_name' enabled to start on boot.${NC}"
     else
         echo -e "${Purple}Failed to enable service '$iran_service_name'. Please check your system configuration.${NC}"
         return 1
@@ -378,7 +378,7 @@ EOF
 
     # Start the service
     if systemctl start "$iran_service_name"; then
-        echo -e "${GREEN}Service '$iran_service_name' started.${NC}"
+        echo -e "${Cyan}Service '$iran_service_name' started.${NC}"
     else
         echo -e "${Purple}Failed to start service '$service_name'. Please check your system configuration.${NC}"
         return 1
@@ -436,13 +436,13 @@ for ((j=1; j<=$SERVER_NUM; j++)); do
     local transport=""
 
     # Keep prompting the user until a valid input is provided
-while [[ "$transport" != "tcp" && "$transport" != "udp" && "$transport" != "ws" ]]; do
+while [[ "$transport" != "tcp" && "$transport" != "udp" ]]; do
     # Prompt the user to input transport type
-    read -p "Enter transport type (tcp/udp/ws): " transport
+    read -p "Enter transport type (tcp/udp): " transport
 
     # Check if the input is either tcp or udp
-    if [[ "$transport" != "tcp" && "$transport" != "udp" && "$transport" != "ws" ]]; then
-        echo -e "${Purple}Invalid transport type. Please enter 'tcp' or 'udp' or 'ws'.${NC}"
+    if [[ "$transport" != "tcp" && "$transport" != "udp" ]]; then
+        echo -e "${Purple}Invalid transport type. Please enter 'tcp' or 'udp'.${NC}"
     fi
 done
 
@@ -469,7 +469,7 @@ if check_ipv6 "$SERVER_ADDR"; then
     SERVER_ADDR="${SERVER_ADDR%]}"
 fi
 
-    # Generate server configuration file
+# Generate server configuration file
     cat << EOF > "$kharej_config_file"
 [client]
 remote_addr = "${SERVER_ADDR}:${tunnel_port}"
@@ -508,8 +508,8 @@ done
     EXEC_COMMAND+="'"
     
     echo ''
-    echo -e "${GREEN}Kharej server configuration completed.${NC}\n"
-    echo -e "${GREEN}Starting Rathole server as a service...${NC}\n"
+    echo -e "${Cyan}Kharej server configuration completed.${NC}\n"
+    echo -e "${Cyan}Starting Rathole server as a service...${NC}\n"
 
     # Create the systemd service unit file
     cat << EOF > "$kharej_service_file"
@@ -537,7 +537,7 @@ EOF
 
     # Enable the service to start on boot
     if systemctl enable "$kharej_service_name" >/dev/null 2>&1; then
-        echo -e "${GREEN}Service '$kharej_service_name' enabled to start on boot.${NC}"
+        echo -e "${Cyan}Service '$kharej_service_name' enabled to start on boot.${NC}"
     else
         echo -e "${Purple}Failed to enable service '$kharej_service_name'. Please check your system configuration.${NC}"
         return 1
@@ -545,7 +545,7 @@ EOF
 
     # Start the service
     if systemctl start "$kharej_service_name"; then
-        echo -e "${GREEN}Service '$kharej_service_name' started.${NC}"
+        echo -e "${Cyan}Service '$kharej_service_name' started.${NC}"
     else
         echo -e "${Purple}Failed to start service '$kharej_service_name'. Please check your system configuration.${NC}"
         return 1
@@ -566,7 +566,7 @@ destroy_tunnel() {
 if [[ $confirm == [yY] ]]; then
     if [[ -d "$config_dir" ]]; then
         rm -rf "$config_dir"
-        echo -e "${GREEN}Rathole-core directory removed.${NC}\n"
+        echo -e "${Cyan}Rathole-core directory removed.${NC}\n"
     else
         echo -e "${Purple}Rathole-core directory not found.${NC}\n"
     fi
@@ -617,7 +617,7 @@ fi
         echo -e "${Purple}Failed to reload systemd daemon. Please check your system configuration.${NC}"
     fi
     
-    echo -e "${GREEN}Tunnel destroyed successfully!${NC}\n"
+    echo -e "${Cyan}Tunnel destroyed successfully!${NC}\n"
     read -p "Press Enter to continue..."
 }
 
@@ -630,7 +630,7 @@ check_tunnel_status() {
     
     # Check if the rathole-client-kharej service is active
     if systemctl is-active --quiet "$kharej_service_name"; then
-        echo -e "${GREEN}Kharej service is running on this server.${NC}"
+        echo -e "${Cyan}Kharej service is running on this server.${NC}"
     else
         echo -e "${Purple}Kharej service is not running on this server.${NC}"
     fi
@@ -638,7 +638,7 @@ check_tunnel_status() {
     echo ''
     # Check if the rathole-server-iran service is active
     if systemctl is-active --quiet "$iran_service_name"; then
-        echo -e "${GREEN}IRAN service is running on this server..${NC}"
+        echo -e "${Cyan}IRAN service is running on this server..${NC}"
     else
         echo -e "${Purple}IRAN service is not running on this server..${NC}"
     fi
@@ -654,13 +654,13 @@ restart_services() {
     # Check if rathole-client-kharej.service exists
     if systemctl list-units --type=service | grep -q "$kharej_service_name"; then
         systemctl restart "$kharej_service_name"
-        echo -e "${GREEN}Kharej service restarted.${NC}"
+        echo -e "${Cyan}Kharej service restarted.${NC}"
     fi
 
     # Check if rathole-server-iran.service exists
     if systemctl list-units --type=service | grep -q "$iran_service_name"; then
         systemctl restart "$iran_service_name"
-        echo -e "${GREEN}IRAN service restarted.${NC}"
+        echo -e "${Cyan}IRAN service restarted.${NC}"
     fi
 
     # If neither service exists
@@ -694,7 +694,7 @@ delete_cron_job() {
     # Delete all cron jobs added by this script
     crontab -l | grep -v '# Added by rathole_script' | crontab -
     rm -f /etc/reset.sh >/dev/null 2>&1
-    echo -e "${GREEN}Cron jobs added by this script have been deleted successfully.${NC}"
+    echo -e "${Cyan}Cron jobs added by this script have been deleted successfully.${NC}"
 }
 
 
@@ -729,7 +729,7 @@ add_cron_job_menu() {
     # Prompt user to choose a service
     echo -e "Select the service you want to restart:\n"
     echo -e "${CYAN}1. Kharej service${NC}"
-    echo -e "${GREEN}2. IRAN service${NC}"
+    echo -e "${Cyan}2. IRAN service${NC}"
     echo ''
     read -p "Enter your choice: " service_choice
     echo ''
@@ -833,7 +833,7 @@ EOF
     # Add cron job to restart the specified service at the chosen time
     add_cron_job "$reset_path" "$restart_time"
 
-    echo -e "${GREEN}Cron-job added successfully to restart the service '$service_name'.${NC}"
+    echo -e "${Cyan}Cron-job added successfully to restart the service '$service_name'.${NC}"
 }
 
 # main maenu for showing ports monitoring options
@@ -842,7 +842,7 @@ ports_monitor_menu(){
     # Prompt user to choose a option
     echo -e "Select the option you want to do:\n"
     echo -e "${CYAN}1. Add ports for monitoring traffic${NC}\n"
-    echo -e "${GREEN}2. View traffic usage${NC}\n"
+    echo -e "${GRCyanEEN}2. View traffic usage${NC}\n"
     echo -e "${Purple}3. Remove iptables rules${NC}\n"
     read -p "Enter your choice: " option_choice
     echo ''
@@ -877,7 +877,7 @@ add_iptables_rules() {
             # Check if the port with comment "rathole" already exists
             if ! iptables -C INPUT -p tcp --dport "$port" -j ACCEPT -m comment --comment "rathole" &>/dev/null; then
                 iptables -A INPUT -p tcp --dport "$port" -j ACCEPT -m comment --comment "rathole"
-                echo -e "${GREEN}Port $port added to iptables.${NC}"
+                echo -e "${Cyan}Port $port added to iptables.${NC}"
             else
                 echo -e "${YELLOW}Port $port already exists in iptables. Skipping...${NC}"
             fi
@@ -886,7 +886,7 @@ add_iptables_rules() {
         fi
     done
     echo ''
-    echo -e "${GREEN}All desired ports added to iptables successfully${NC}"
+    echo -e "${Cyan}All desired ports added to iptables successfully${NC}"
     echo ''
     read -p "Press any key to continue..."
 }
@@ -926,7 +926,7 @@ view_traffic_usage() {
 del_iptables_rules(){
 	iptables-save | grep -v 'rathole' > /tmp/iptables-filtered.rules
 	iptables-restore < /tmp/iptables-filtered.rules
-    echo -e "${GREEN}All iptables rules related to this script deleted successfully${NC}"
+    echo -e "${Cyan}All iptables rules related to this script deleted successfully${NC}"
     echo ''
     read -p "Press any key to continue..."
 }
@@ -973,11 +973,11 @@ change_security_token() {
     return 1
   fi
   
-  echo -e "${GREEN}Current tunnel port number:${NC} ${MAGENTA}$port_num${NC}"  
-  echo -e "${GREEN}Current token:${NC} ${MAGENTA}$current_token${NC}"
+  echo -e "${Cyan}Current tunnel port number:${NC} ${MAGENTA}$port_num${NC}"  
+  echo -e "${Cyan}Current token:${NC} ${MAGENTA}$current_token${NC}"
   echo ''
   random_token=$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 32)
-  echo -e "${GREEN}Random generated token:${NC} ${MAGENTA}$random_token${NC}"
+  echo -e "${Cyan}Random generated token:${NC} ${MAGENTA}$random_token${NC}"
   echo ''
   # Ask user for new token
   read -p "Enter new token (or press Enter to use default value): " new_token
@@ -990,7 +990,7 @@ change_security_token() {
   # Update the token in the file
   sed -i "s/^default_token = \".*\"/default_token = \"$new_token\"/" "$file_path"
   echo''
-  echo -e "${GREEN}Token updated successfully in $file_path${NC}\n"
+  echo -e "${Cyan}Token updated successfully in $file_path${NC}\n"
 }
 
 update_script(){
@@ -1005,7 +1005,7 @@ if [ -f "$DEST_DIR/$RATHOLE_SCRIPT" ]; then
     # Remove the existing rathole
     rm "$DEST_DIR/$RATHOLE_SCRIPT"
     if [ $? -eq 0 ]; then
-        echo -e "${GREEN}Existing $RATHOLE_SCRIPT has been successfully removed from $DEST_DIR.${NC}"
+        echo -e "${Cyan}Existing $RATHOLE_SCRIPT has been successfully removed from $DEST_DIR.${NC}"
     else
         echo -e "${Purple}Failed to remove existing $RATHOLE_SCRIPT from $DEST_DIR.${NC}"
         sleep 1
@@ -1022,7 +1022,7 @@ curl -s -L -o "$DEST_DIR/$RATHOLE_SCRIPT" "$SCRIPT_URL"
 
 echo ''
 if [ $? -eq 0 ]; then
-    echo -e "${GREEN}New $RATHOLE_SCRIPT has been successfully downloaded to $DEST_DIR.${NC}\n"
+    echo -e "${Cyan}New $RATHOLE_SCRIPT has been successfully downloaded to $DEST_DIR.${NC}\n"
     chmod +x "$DEST_DIR/$RATHOLE_SCRIPT"
     echo -e "${CYAN}Please exit the script and type 'rathole' to run it again${NC}\n"
     read -p "Press any key to continue..."
