@@ -207,10 +207,11 @@ fi
     case "$configure_choice" in
         1) iran_server_configuration ;;
         2) kharej_server_configuration ;;
-        *) echo -e "${RED}Invalid option!${NC}" && sleep 1 ;;
+        *) echo -e "${Purple}Invalid option!${NC}" && sleep 1 ;;
     esac
     echo ''
     read -p "Press Enter to continue..."
+}
 
 
 #Global Variables
