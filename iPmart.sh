@@ -811,7 +811,6 @@ add_cron_job_menu() {
             ;;
     esac
 
-
     # remove cronjob created by thi script
     delete_cron_job > /dev/null 2>&1
     
