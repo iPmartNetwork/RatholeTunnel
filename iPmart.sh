@@ -201,13 +201,13 @@ fi
     echo -e "${YELLOW}Configurating RatHole Tunnel...${NC}"
     echo -e "\e[93m═════════════════════════════════════════════\e[0m" 
     echo ''
-    echo -e "1. For ${Cyan}IRAN${Purple} Server\n"
-    echo -e "2. For ${Purple}Kharej${Cyan} Server\n"
+    echo -e "1. For ${Cyan}IRAN${Cyan} Server\n"
+    echo -e "2. For ${Purple}Kharej${Purple} Server\n"
     read -p "Enter your choice: " configure_choice
     case "$configure_choice" in
         1) iran_server_configuration ;;
         2) kharej_server_configuration ;;
-        *) echo -e "${Purple}Invalid option!${NC}" && sleep 1 ;;
+        *) echo -e "${Purple}Invalid option!${Purple}" && sleep 1 ;;
     esac
     echo ''
     read -p "Press Enter to continue..."
