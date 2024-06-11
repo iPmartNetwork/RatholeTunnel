@@ -171,9 +171,9 @@ EOF
 # Function to display server location and IP
 display_server_info() {
     echo -e "\e[93m═════════════════════════════════════════════\e[0m"  
-    echo -e "${Cyan}Server Country:${NC} $SERVER_COUNTRY"
-    echo -e "${Cyan}Server IP:${NC} $SERVER_IP"
-    echo -e "${Cyan}Server ISP:${NC} $SERVER_ISP"
+    echo -e "${Cyan}Server Country:${Purple} $SERVER_COUNTRY"
+    echo -e "${Cyan}Server IP:${Purple} $SERVER_IP"
+    echo -e "${Cyan}Server ISP:${Purple} $SERVER_ISP"
 }
 
 # Function to display Rathole Core installation status
