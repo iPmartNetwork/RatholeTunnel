@@ -181,7 +181,7 @@ display_rathole_core_status() {
     if [[ -d "$config_dir" ]]; then
         echo -e "${CYAN}Rathole Core:${NC} ${Cyan}Installed${NC}"
     else
-        echo -e "${CYAN}Rathole Core:${NC} ${Purple}Not installed${NC}"
+        echo -e "${Purple}Rathole Core:${NC} ${Purple}Not installed${NC}"
     fi
     echo -e "\e[93m═════════════════════════════════════════════\e[0m"  
 }
@@ -201,8 +201,8 @@ fi
     echo -e "${YELLOW}Configurating RatHole Tunnel...${NC}"
     echo -e "\e[93m═════════════════════════════════════════════\e[0m" 
     echo ''
-    echo -e "1. For ${Cyan}IRAN${NC} Server\n"
-    echo -e "2. For ${Cyan}Kharej${NC} Server\n"
+    echo -e "1. For ${Cyan}IRAN${Cyan} Server\n"
+    echo -e "2. For ${Purple}Kharej${Purple} Server\n"
     read -p "Enter your choice: " configure_choice
     case "$configure_choice" in
         1) iran_server_configuration ;;
