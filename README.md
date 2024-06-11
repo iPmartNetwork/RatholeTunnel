@@ -37,7 +37,7 @@
 
 
 
-## نسخه پیشنهادی
+## نصب 
 
 
 
@@ -47,12 +47,6 @@ bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/ma
 
 ```
 
-## نسخه تست 
-
-```
-bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/main/alfa.sh)
-
-```
 
 
 <p align="center">_____________________________________________________________________________________
