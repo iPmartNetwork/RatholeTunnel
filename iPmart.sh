@@ -171,15 +171,15 @@ EOF
 # Function to display server location and IP
 display_server_info() {
     echo -e "\e[93m═════════════════════════════════════════════\e[0m"  
-    echo -e "${CYAN}Server Country:${NC} $SERVER_COUNTRY"
-    echo -e "${CYAN}Server IP:${NC} $SERVER_IP"
-    echo -e "${CYAN}Server ISP:${NC} $SERVER_ISP"
+    echo -e "${Cyan}Server Country:${NC} $SERVER_COUNTRY"
+    echo -e "${Cyan}Server IP:${NC} $SERVER_IP"
+    echo -e "${Cyan}Server ISP:${NC} $SERVER_ISP"
 }
 
 # Function to display Rathole Core installation status
 display_rathole_core_status() {
     if [[ -d "$config_dir" ]]; then
-        echo -e "${CYAN}Rathole Core:${NC} ${Cyan}Installed${NC}"
+        echo -e "${Cyan}Rathole Core:${NC} ${Cyan}Installed${NC}"
     else
         echo -e "${Purple}Rathole Core:${NC} ${Purple}Not installed${NC}"
     fi
@@ -201,8 +201,8 @@ fi
     echo -e "${YELLOW}Configurating RatHole Tunnel...${NC}"
     echo -e "\e[93m═════════════════════════════════════════════\e[0m" 
     echo ''
-    echo -e "1. For ${Cyan}IRAN${Cyan} Server\n"
-    echo -e "2. For ${Purple}Kharej${Purple} Server\n"
+    echo -e "1. For ${Cyan}IRAN${Purple} Server\n"
+    echo -e "2. For ${Purple}Kharej${{Cyan} Server\n"
     read -p "Enter your choice: " configure_choice
     case "$configure_choice" in
         1) iran_server_configuration ;;
