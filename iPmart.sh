@@ -293,7 +293,7 @@ echo ''
 local nodelay=""
 # Keep prompting the user until a valid input is provided
 while [[ "$nodelay" != "true" && "$nodelay" != "false" ]]; do
-    read -p "TCP No-Delay (true / false}): " nodelay
+    read -p "TCP No-Delay (true / false): " nodelay
     if [[ "$nodelay" != "true" && "$nodelay" != "false" ]]; then
         echo -e "${Purple}Invalid nodelay input. Please enter 'true' or 'false'.${NC}"
     fi
