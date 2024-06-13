@@ -765,8 +765,6 @@ add_cron_job_menu() {
     echo ''
     read -p "Enter your choice: " time_choice
     echo ''
-    read -p "Enter your choice: " time_choice
-    echo ''
     # Validate user input for restart time interval
     case $time_choice in
         1)
