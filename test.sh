@@ -389,7 +389,16 @@ EOF
 kharej_server_configuration() {
     clear
     echo -e "${YELLOW}Configuring kharej server...${NC}\n"
-    read -p "How many IRAN server do you have: " SERVER_NUM
+    
+    while true; do
+    read -p "How many IRAN servers do you have: " SERVER_NUM
+    if [[ $SERVER_NUM =~ ^[0-9]+$ ]] && [ $SERVER_NUM -ge 1 ] && [ $SERVER_NUM -le 99 ]; then
+        break
+    else
+        echo -e "${Purple}Please enter a number between 1 and 99${NC}"
+    fi
+done
+
     
     local EXEC_COMMAND="/bin/bash -c '"
     
