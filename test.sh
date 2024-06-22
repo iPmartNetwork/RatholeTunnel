@@ -993,13 +993,13 @@ change_security_token() {
 update_script(){
 # Define the destination path
 DEST_DIR="/usr/bin/"
-RATHOLE_SCRIPT="rathole"
+RATHOLE_SCRIPT="iPmart"
 SCRIPT_URL="https://github.com/iPmartNetwork/RatholeTunnel/raw/main/iPmart.sh"
 
 echo ''
-# Check if rathole.sh exists in /bin/bash
+# Check if iPmart.sh exists in /bin/bash
 if [ -f "$DEST_DIR/$RATHOLE_SCRIPT" ]; then
-    # Remove the existing rathole
+    # Remove the existing iPmart
     rm "$DEST_DIR/$RATHOLE_SCRIPT"
     if [ $? -eq 0 ]; then
         echo -e "${Cyan}Existing $RATHOLE_SCRIPT has been successfully removed from $DEST_DIR.${NC}"
@@ -1012,7 +1012,7 @@ else
     echo -e "${YELLOW}$RATHOLE_SCRIPT does not exist in $DEST_DIR. No need to remove.${NC}"
 fi
 echo ''
-# Download the new rathole.sh from the GitHub URL
+# Download the new iPmart.sh from the GitHub URL
 echo -e "${CYAN}Downloading the new $RATHOLE_SCRIPT from $SCRIPT_URL...${NC}"
 
 curl -s -L -o "$DEST_DIR/$RATHOLE_SCRIPT" "$SCRIPT_URL"
