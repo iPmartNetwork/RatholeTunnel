@@ -69,10 +69,12 @@ bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/ma
 
 
 
- ## نحوه ی تانل چند سرور خارج به یک سرور ایران
+ ## نحوه ی اجرای مجدد اسکریپت
 
-در نسخه الفا امکان تانل چند سرور ایران به یک خارج و برعکس اضافه شد .
+```
+rathole
 
+```
 
 
 
