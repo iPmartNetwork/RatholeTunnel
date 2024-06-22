@@ -1002,15 +1002,6 @@ sudo systemctl daemon-reload
 sudo systemctl restart $service_name
 EOF
 
-    # make it +x !
-    chmod +x "$reset_path"
-    
-    # Add cron job to restart the specified service at the chosen time
-    add_cron_job "$reset_path" "$restart_time"
-
-    echo -e "${Cyan}Cron-job added successfully to restart the service '$service_name'.${NC}"
-}
-
 # main maenu for showing ports monitoring options
 ports_monitor_menu(){
     clear
