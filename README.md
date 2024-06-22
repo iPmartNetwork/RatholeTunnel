@@ -40,10 +40,25 @@
 ## نصب 
 
 
-
+نسخه پیشنهادی
 
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/main/iPmart.sh)
+
+```
+
+نسخه الفا
+
+```
+bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/main/alpha.sh)
+
+```
+
+
+نسخه تست 
+
+```
+bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/main/test.sh)
 
 ```
 
