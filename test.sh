@@ -1002,7 +1002,7 @@ change_security_token() {
 update_script(){
 # Define the destination path
 DEST_DIR="/usr/bin/"
-RATHOLE_SCRIPT="iPmart"
+RATHOLE_SCRIPT="rathole"
 SCRIPT_URL="https://github.com/iPmartNetwork/RatholeTunnel/raw/main/iPmart.sh"
 
 echo ''
