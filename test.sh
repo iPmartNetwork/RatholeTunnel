@@ -389,16 +389,7 @@ EOF
 kharej_server_configuration() {
     clear
     echo -e "${YELLOW}Configuring kharej server...${NC}\n"
-    
-    while true; do
-    read -p "How many IRAN servers do you have: " SERVER_NUM
-    if [[ $SERVER_NUM =~ ^[0-9]+$ ]] && [ $SERVER_NUM -ge 1 ] && [ $SERVER_NUM -le 99 ]; then
-        break
-    else
-        echo -e "${RED}Please enter a number between 1 and 99${NC}"
-    fi
-done
-
+    read -p "How many IRAN server do you have: " SERVER_NUM
     
     local EXEC_COMMAND="/bin/bash -c '"
     
@@ -478,11 +469,11 @@ if check_ipv6 "$SERVER_ADDR"; then
     SERVER_ADDR="${SERVER_ADDR%]}"
 fi
 
-    # Generate server configuration file
+# Generate server configuration file
     cat << EOF > "$kharej_config_file"
 [client]
 remote_addr = "${SERVER_ADDR}:${tunnel_port}"
-default_token = "musixal_tunnel"
+default_token = "iPmart_tunnel"
 heartbeat_timeout = 40
 retry_interval = 1
 
@@ -816,178 +807,9 @@ add_cron_job_menu() {
             echo -e "${Purple}Invalid choice. Please enter a number between 1 and 12.${NC}\n"
             return 1
             ;;
-        esac
-}
+    esac
 
-add_iptables_rules() {
-    echo ''
-    # Prompt user to enter ports
-    read -p "Enter the desired ports separated by commas : " ports
-    IFS=',' read -r -a port_array <<< "$ports"
-	echo ''
-    for port in "${port_array[@]}"; do
-        # Check if the entered value is a valid integer
-        if grep -wqE '^[0-9]+$' <<< "$port"; then
-            # Check if the port with comment "rathole" already exists
-            if ! iptables -C INPUT -p tcp --dport "$port" -j ACCEPT -m comment --comment "rathole" &>/dev/null; then
-                iptables -A INPUT -p tcp --dport "$port" -j ACCEPT -m comment --comment "rathole"
-                echo -e "${Cyan}Port $port added to iptables.${NC}"
-            else
-                echo -e "${Cyan}Port $port already exists in iptables. Skipping...${NC}"
-            fi
-        else
-            echo -e "${Purple}Invalid port number: $port. Skipping...${NC}"
-        fi
-    done
-    echo ''
-    echo -e "${Cyan}All desired ports added to iptables successfully${NC}"
-    echo ''
-    read -p "Press any key to continue..."
-}
-
-# Function to draw a horizontal line
-draw_line() {
-    printf "$+----------+------------+\n"
-}
-
-# Function to draw table rows
-draw_row() {
-    printf "| %-8s | %-10s |\n" "$1" "$2"
-}
-
-# Main function to draw the table
-view_traffic_usage() {
-	clear
-    draw_line
-    draw_row "Port" "Traffic (B)"
-    draw_line
-    # Use command substitution to get port numbers dynamically
-    ports=$(iptables -L -v --numeric | grep -i -w "rathole" | grep -o 'tcp dpt:[0-9]\+' | awk -F':' '{print $2}')
-    # Use command substitution to get traffic information dynamically
-    traffic=$(iptables -L -v --numeric | grep -i -w "rathole" | awk '{print $2}')
-    for port in $ports; do
-        # Find the corresponding traffic value for each port
-        index=$(echo $ports | tr ' ' '\n' | grep -n -w $port | cut -d ':' -f1)
-        traffic_val=$(echo $traffic | tr ' ' '\n' | sed -n ${index}p)
-        draw_row "$port" "$traffic_val"
-    done
-    draw_line
-    echo ''
-    read -p "Press any key to continue..."
-}
-
-del_iptables_rules(){
-	iptables-save | grep -v 'rathole' > /tmp/iptables-filtered.rules
-	iptables-restore < /tmp/iptables-filtered.rules
-    echo -e "${Cyan}All iptables rules related to this script deleted successfully${NC}"
-    echo ''
-    read -p "Press any key to continue..."
-}
-
-# Function to check the security token
-check_security_token() {
-echo ''
-echo -e "${Purple}IMPORTANT!${NC} ${Cyan}The security token must be same in the iran and kharej server.${NC}\n"
-
-# Check if server.toml exists and update it
-if [ -f "$iran_config_file" ]; then
-     port=$(cat "$iran_config_file" | grep -oP 'bind_addr = "0\.0\.0\.0:\K[0-9]+' | head -n1)  
-     change_security_token "$iran_config_file" "$port"
-     restart_services
-     return 0
-fi
-# Check if client.toml exists and update it
-if ls $kharej_config_file 1> /dev/null 2>&1; then
-     for file in $kharej_config_file; do
-         filename=$(basename "$file")   
-         change_security_token "$file" "${filename:8:-5}"
-         echo -e "${Cyan} _____________________________________________ ${NC}"
-	 echo ''
-         sleep 1
-     done
-  restart_services
-  return 0
-fi
-
-echo -e "${Purple}Configs files not found!${NC}\n"
-read -p "Press any key to continue..."
-}
-
-# Function to update the security token
-change_security_token() {
-  local file_path=$1
-  local port_num=$2
-
-  # Show the current token
-  current_token=$(grep -Po '(?<=^default_token = ")[^"]*' "$file_path")
-  if [ -z "$current_token" ]; then
-    echo -e "${Purple}default_token not found in $file_path${NC}"
-    return 1
-  fi
-  
-  echo -e "${Cyan}Current tunnel port number:${NC} ${MAGENTA}$port_num${NC}"  
-  echo -e "${Cyan}Current token:${NC} ${MAGENTA}$current_token${NC}"
-  echo ''
-  random_token=$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 32)
-  echo -e "${Cyan}Random generated token:${NC} ${MAGENTA}$random_token${NC}"
-  echo ''
-  # Ask user for new token
-  read -p "Enter new token (or press Enter to use default value): " new_token
-
-  # Set default token if user didn't enter anything
-  if [ -z "$new_token" ]; then
-    new_token="iPmart_tunnel"
-  fi
-
-  # Update the token in the file
-  sed -i "s/^default_token = \".*\"/default_token = \"$new_token\"/" "$file_path"
-  echo''
-  echo -e "${Cyan}Token updated successfully in $file_path${NC}\n"
-}
-
-update_script(){
-# Define the destination path
-DEST_DIR="/usr/bin/"
-RATHOLE_SCRIPT="iPmart"
-SCRIPT_URL="https://github.com/ipmartnetwork/RatholeTunnel/raw/main/iPmart.sh"
-
-echo ''
-# Check if iPmart.sh exists in /bin/bash
-if [ -f "$DEST_DIR/$RATHOLE_SCRIPT" ]; then
-    # Remove the existing rathole
-    rm "$DEST_DIR/$RATHOLE_SCRIPT"
-    if [ $? -eq 0 ]; then
-        echo -e "${Cyan}Existing $RATHOLE_SCRIPT has been successfully removed from $DEST_DIR.${NC}"
-    else
-        echo -e "${RED}Failed to remove existing $RATHOLE_SCRIPT from $DEST_DIR.${NC}"
-        sleep 1
-        return 1
-    fi
-else
-    echo -e "${YELLOW}$RATHOLE_SCRIPT does not exist in $DEST_DIR. No need to remove.${NC}"
-fi
-echo ''
-# Download the new iPmart.sh from the GitHub URL
-echo -e "${Cyan}Downloading the new $RATHOLE_SCRIPT from $SCRIPT_URL...${NC}"
-
-curl -s -L -o "$DEST_DIR/$RATHOLE_SCRIPT" "$SCRIPT_URL"
-
-echo ''
-if [ $? -eq 0 ]; then
-    echo -e "${Cyan}New $RATHOLE_SCRIPT has been successfully downloaded to $DEST_DIR.${NC}\n"
-    chmod +x "$DEST_DIR/$RATHOLE_SCRIPT"
-    echo -e "${Cyan}Please exit the script and type 'rathole' to run it again${NC}\n"
-    read -p "Press any key to continue..."
-    exit 0
-else
-    echo -e "${RED}Failed to download $RATHOLE_SCRIPT from $SCRIPT_URL.${NC}"
-    sleep 1
-    return 1
-fi
-
-}
-
-# remove cronjob created by thi script
+    # remove cronjob created by thi script
     delete_cron_job > /dev/null 2>&1
     
     # Path ro reset file
@@ -1002,12 +824,21 @@ sudo systemctl daemon-reload
 sudo systemctl restart $service_name
 EOF
 
+    # make it +x !
+    chmod +x "$reset_path"
+    
+    # Add cron job to restart the specified service at the chosen time
+    add_cron_job "$reset_path" "$restart_time"
+
+    echo -e "${Cyan}Cron-job added successfully to restart the service '$service_name'.${NC}"
+}
+
 # main maenu for showing ports monitoring options
 ports_monitor_menu(){
     clear
     # Prompt user to choose a option
     echo -e "Select the option you want to do:\n"
-    echo -e "${Cyan}1. Add ports for monitoring traffic${NC}\n"
+    echo -e "${CYAN}1. Add ports for monitoring traffic${NC}\n"
     echo -e "${Cyan}2. View traffic usage${NC}\n"
     echo -e "${Purple}3. Remove iptables rules${NC}\n"
     read -p "Enter your choice: " option_choice
@@ -1166,7 +997,7 @@ RATHOLE_SCRIPT="rathole"
 SCRIPT_URL="https://github.com/iPmartNetwork/RatholeTunnel/raw/main/iPmart.sh"
 
 echo ''
-# Check if iPmart.sh exists in /bin/bash
+# Check if rathole.sh exists in /bin/bash
 if [ -f "$DEST_DIR/$RATHOLE_SCRIPT" ]; then
     # Remove the existing rathole
     rm "$DEST_DIR/$RATHOLE_SCRIPT"
@@ -1181,7 +1012,7 @@ else
     echo -e "${YELLOW}$RATHOLE_SCRIPT does not exist in $DEST_DIR. No need to remove.${NC}"
 fi
 echo ''
-# Download the new iPmart.sh from the GitHub URL
+# Download the new rathole.sh from the GitHub URL
 echo -e "${CYAN}Downloading the new $RATHOLE_SCRIPT from $SCRIPT_URL...${NC}"
 
 curl -s -L -o "$DEST_DIR/$RATHOLE_SCRIPT" "$SCRIPT_URL"
