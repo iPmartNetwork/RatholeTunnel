@@ -55,10 +55,10 @@ bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/ma
 ```
 
 
-نسخه تست 
+نسخه قدیمی
 
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/main/test.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/main/old.sh)
 
 ```
 
