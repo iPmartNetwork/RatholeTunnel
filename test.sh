@@ -1330,18 +1330,18 @@ display_menu() {
     display_server_info
     display_rathole_core_status
     echo ''
-    echo -e "${White}1. Install Rathole Core${NC}"
-    echo -e "${Cyan}2. Configure tunnel${NC}"
-    echo -e "${White}3. Destroy tunnel${NC}"
-    echo -e "${Cyan}4. Check tunnel status${NC}"
-    echo -e "${White}5. Restart services${NC}"
-    echo -e "${Cyan}6. Add & remove cron-job reset timer"
-    echo -e "${White}7. Port traffic monitoring"
-    echo -e "${Cyan}8. Optimize the Network settings${NC}"
-    echo -e "${White}9. Optimize the System Limits${NC}"
+    echo -e "${White}1.  Install Rathole Core${NC}"
+    echo -e "${Cyan}2.  Configure tunnel${NC}"
+    echo -e "${White}3.  Destroy tunnel${NC}"
+    echo -e "${Cyan}4.  Check tunnel status${NC}"
+    echo -e "${White}5.  Restart services${NC}"
+    echo -e "${Cyan}6.  Add & remove cron-job reset timer"
+    echo -e "${White}7.  Port traffic monitoring"
+    echo -e "${Cyan}8.  Optimize the Network settings${NC}"
+    echo -e "${White}9.  Optimize the System Limits${NC}"
     echo -e "${Cyan}10. Fix TimeZone${NC}"
     echo -e "${White}11. update_script"
-    echo -e "${Cyan}0. Exit"
+    echo -e "${Cyan}0.  Exit"
     echo ''
     echo "-------------------------------"
 }
