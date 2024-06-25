@@ -554,8 +554,17 @@ EOF
 # Function for configuring Kharej server
 kharej_server_configuration() {
     clear
-    echo -e "${YELLOW}Configuring kharej server...${NC}\n"
-    read -p "How many IRAN server do you have: " SERVER_NUM
+    echo -e "${Cyan}Configuring kharej server...${NC}\n"
+    
+    while true; do
+    read -p "How many IRAN servers do you have: " SERVER_NUM
+    if [[ $SERVER_NUM =~ ^[0-9]+$ ]] && [ $SERVER_NUM -ge 1 ] && [ $SERVER_NUM -le 99 ]; then
+        break
+    else
+        echo -e "${Purple}Please enter a number between 1 and 99${NC}"
+    fi
+done
+
     
     local EXEC_COMMAND="/bin/bash -c '"
     
@@ -564,7 +573,7 @@ kharej_server_configuration() {
 for ((j=1; j<=$SERVER_NUM; j++)); do
 
     clear
-    echo -e "${Cyan}Let's create a tunnel for server $j${NC}" 
+    echo -e "${cyan}Let's create a tunnel for server $j${NC}" 
     echo -e "\e[93m═════════════════════════════════════════════\e[0m"  
     echo ''    
     # Read the server address
@@ -1305,6 +1314,7 @@ optimize_network() {
 # Color codes
 Purple='\033[0;35m'
 Cyan='\033[0;36m'
+cyan='\033[0;36m'
 CYAN='\033[0;36m'
 YELLOW='\033[0;33m'
 White='\033[0;96m'
@@ -1338,7 +1348,7 @@ display_menu() {
 
 # Function to read user input
 read_option() {
-    read -p "Enter your choice [1-9]: " choice
+    read -p "Enter your choice [1-11]: " choice
     case $choice in
         1) download_and_extract_rathole ;;
         2) configure_tunnel ;;
