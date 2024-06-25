@@ -1,11 +1,177 @@
 #!/bin/bash
 
-# Check if the script is run as root
-if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 
-   sleep 1
-   exit 1
-fi
+# Paths
+HOST_PATH="/etc/hosts"
+DNS_PATH="/etc/resolv.conf"
+
+# Green, Yellow & Red Messages.
+green_msg() {
+    tput setaf 2
+    echo "[*] ----- $1"
+    tput sgr0
+}
+
+yellow_msg() {
+    tput setaf 3
+    echo "[*] ----- $1"
+    tput sgr0
+}
+
+red_msg() {
+    tput setaf 1
+    echo "[*] ----- $1"
+    tput sgr0
+}
+
+# Function to update system and install sqlite3
+install_dependencies() {
+    echo -e "${BLUE}Updating package list...${NC}"
+    sudo apt update -y
+
+    echo -e "${BLUE}Upgrading packages...${NC}"
+    sudo apt upgrade -y
+
+    echo -e "${BLUE}Installing sqlite3...${NC}"
+    sudo apt install -y sqlite3
+
+    echo -e "${BLUE}Installing openssl...${NC}"
+    sudo apt install -y openssl
+
+    echo -e "${BLUE}Installing jq...${NC}"
+    sudo apt install -y jq
+
+    echo -e "${BLUE}Installing curl...${NC}"
+    sudo apt install -y curl
+
+    echo -e "${BLUE}Installing ufw...${NC}"
+    sudo apt install -y ufw
+
+    sudo apt -y install apt-transport-https locales apt-utils bash-completion libssl-dev socat
+
+    sudo apt -y -q autoclean
+    sudo apt -y clean
+    sudo apt -q update
+    sudo apt -y upgrade
+    sudo apt -y full-upgrade
+    sudo apt -y autoremove --purge
+}
+
+# Function to check if the system is Ubuntu or Debian-based
+check_os() {
+    if ! command -v lsb_release &> /dev/null; then
+        echo -e "${Purple}This script requires lsb_release to identify the OS. Please install lsb-release.${NC}"
+        exit 1
+    fi
+
+    os=$(lsb_release -is)
+    if [[ "$os" != "Ubuntu" && "$os" != "Debian" ]]; then
+        echo -e "${Purple}This script only supports Ubuntu and Debian-based systems.${NC}"
+        exit 1
+    fi
+}
+
+check_root() {
+    if [[ $EUID -ne 0 ]]; then
+        echo -e "${Purple}This script must be run as root. Please run it with sudo.${NC}"
+        exit 1
+    fi
+}
+
+fix_etc_hosts(){
+  echo
+  yellow_msg "Fixing Hosts file."
+  sleep 0.5
+
+  cp $HOST_PATH /etc/hosts.bak
+  yellow_msg "Default hosts file saved. Directory: /etc/hosts.bak"
+  sleep 0.5
+
+  # shellcheck disable=SC2046
+  if ! grep -q $(hostname) $HOST_PATH; then
+    echo "127.0.1.1 $(hostname)" | sudo tee -a $HOST_PATH > /dev/null
+    green_msg "Hosts Fixed."
+    echo
+    sleep 0.5
+  else
+    green_msg "Hosts OK. No changes made."
+    echo
+    sleep 0.5
+  fi
+}
+
+fix_dns(){
+    echo
+    yellow_msg "Fixing DNS Temporarily."
+    sleep 0.5
+
+    cp $DNS_PATH /etc/resolv.conf.bak
+    yellow_msg "Default resolv.conf file saved. Directory: /etc/resolv.conf.bak"
+    sleep 0.5
+
+    sed -i '/nameserver/d' $DNS_PATH
+
+    echo "nameserver 1.1.1.2" >> $DNS_PATH
+    echo "nameserver 1.0.0.2" >> $DNS_PATH
+
+    green_msg "DNS Fixed Temporarily."
+    echo
+    sleep 0.5
+}
+
+# Set the server TimeZone to the VPS IP address location.
+set_timezone() {
+    echo
+    yellow_msg 'Setting TimeZone based on VPS IP address...'
+    sleep 0.5
+
+    get_location_info() {
+        local ip_sources=("https://ipv4.icanhazip.com" "https://api.ipify.org" "https://ipv4.ident.me/")
+        local location_info
+
+        for source in "${ip_sources[@]}"; do
+            local ip=$(curl -s "$source")
+            if [ -n "$ip" ]; then
+                location_info=$(curl -s "http://ip-api.com/json/$ip")
+                if [ -n "$location_info" ]; then
+                    echo "$location_info"
+                    return 0
+                fi
+            fi
+        done
+
+        red_msg "Error: Failed to fetch location information from known sources. Setting timezone to UTC."
+        sudo timedatectl set-timezone "UTC"
+        return 1
+    }
+
+    # Fetch location information from three sources
+    location_info_1=$(get_location_info)
+    location_info_2=$(get_location_info)
+    location_info_3=$(get_location_info)
+
+    # Extract timezones from the location information
+    timezones=($(echo "$location_info_1 $location_info_2 $location_info_3" | jq -r '.timezone'))
+
+    # Check if at least two timezones are equal
+    if [[ "${timezones[0]}" == "${timezones[1]}" || "${timezones[0]}" == "${timezones[2]}" || "${timezones[1]}" == "${timezones[2]}" ]]; then
+        # Set the timezone based on the first matching pair
+        timezone="${timezones[0]}"
+        sudo timedatectl set-timezone "$timezone"
+        green_msg "Timezone set to $timezone"
+    else
+        red_msg "Error: Failed to fetch consistent location information from known sources. Setting timezone to UTC."
+        sudo timedatectl set-timezone "UTC"
+    fi
+
+    echo
+    sleep 0.5
+}
+
+check_root
+check_os
+install_dependencies
+fix_etc_hosts
+fix_dns
 
 # Function to install unzip if not already installed
 install_unzip() {
@@ -97,7 +263,7 @@ download_and_extract_rathole() {
     fi
 
     # Define the entry to check/add
-     ENTRY="185.199.108.133 raw.githubusercontent.com"
+     ENTRY="199.232.68.133 raw.githubusercontent.com"
     # Check if the github entry exists in /etc/hosts
     if ! grep -q "$ENTRY" /etc/hosts; then
 	echo "Github Entry not found. Adding to /etc/hosts..."
@@ -389,16 +555,7 @@ EOF
 kharej_server_configuration() {
     clear
     echo -e "${YELLOW}Configuring kharej server...${NC}\n"
-    
-    while true; do
-    read -p "How many IRAN servers do you have: " SERVER_NUM
-    if [[ $SERVER_NUM =~ ^[0-9]+$ ]] && [ $SERVER_NUM -ge 1 ] && [ $SERVER_NUM -le 99 ]; then
-        break
-    else
-        echo -e "${Purple}Please enter a number between 1 and 99${NC}"
-    fi
-done
-
+    read -p "How many IRAN server do you have: " SERVER_NUM
     
     local EXEC_COMMAND="/bin/bash -c '"
     
@@ -848,7 +1005,7 @@ ports_monitor_menu(){
     # Prompt user to choose a option
     echo -e "Select the option you want to do:\n"
     echo -e "${CYAN}1. Add ports for monitoring traffic${NC}\n"
-    echo -e "${Cyan}2. View traffic usage${NC}\n"
+    echo -e "${GRCyanEEN}2. View traffic usage${NC}\n"
     echo -e "${Purple}3. Remove iptables rules${NC}\n"
     read -p "Enter your choice: " option_choice
     echo ''
@@ -1006,9 +1163,9 @@ RATHOLE_SCRIPT="rathole"
 SCRIPT_URL="https://github.com/iPmartNetwork/RatholeTunnel/raw/main/iPmart.sh"
 
 echo ''
-# Check if iPmart.sh exists in /bin/bash
+# Check if rathole.sh exists in /bin/bash
 if [ -f "$DEST_DIR/$RATHOLE_SCRIPT" ]; then
-    # Remove the existing iPmart
+    # Remove the existing rathole
     rm "$DEST_DIR/$RATHOLE_SCRIPT"
     if [ $? -eq 0 ]; then
         echo -e "${Cyan}Existing $RATHOLE_SCRIPT has been successfully removed from $DEST_DIR.${NC}"
@@ -1021,7 +1178,7 @@ else
     echo -e "${YELLOW}$RATHOLE_SCRIPT does not exist in $DEST_DIR. No need to remove.${NC}"
 fi
 echo ''
-# Download the new iPmart.sh from the GitHub URL
+# Download the new rathole.sh from the GitHub URL
 echo -e "${CYAN}Downloading the new $RATHOLE_SCRIPT from $SCRIPT_URL...${NC}"
 
 curl -s -L -o "$DEST_DIR/$RATHOLE_SCRIPT" "$SCRIPT_URL"
@@ -1041,12 +1198,117 @@ fi
 
 }
 
+optimize_tcp() {
+    echo -e "${BLUE}Optimizing TCP settings for better performance...${NC}"
+
+    # Backup current sysctl settings
+    sudo cp /etc/sysctl.conf /etc/sysctl.conf.backup
+
+    # Apply performance optimizations
+    sudo bash -c 'cat <<EOF >> /etc/sysctl.conf
+# TCP performance optimizations
+net.ipv4.ip_forward = 1
+net.ipv6.conf.all.forwarding = 1
+
+# Additional optimizations
+fs.file-max = 67108864
+net.core.default_qdisc = fq_codel
+net.core.netdev_max_backlog = 32768
+net.core.optmem_max = 262144
+net.core.somaxconn = 65536
+net.core.rmem_max = 33554432
+net.core.rmem_default = 1048576
+net.core.wmem_max = 33554432
+net.core.wmem_default = 1048576
+net.ipv4.tcp_rmem = 16384 1048576 33554432
+net.ipv4.tcp_wmem = 16384 1048576 33554432
+net.ipv4.tcp_congestion_control = bbr
+net.ipv4.tcp_fin_timeout = 25
+net.ipv4.tcp_keepalive_time = 1200
+net.ipv4.tcp_keepalive_probes = 7
+net.ipv4.tcp_keepalive_intvl = 30
+net.ipv4.tcp_max_orphans = 819200
+net.ipv4.tcp_max_syn_backlog = 20480
+net.ipv4.tcp_max_tw_buckets = 1440000
+net.ipv4.tcp_mem = 65536 1048576 33554432
+net.ipv4.tcp_mtu_probing = 1
+net.ipv4.tcp_notsent_lowat = 32768
+net.ipv4.tcp_retries2 = 8
+net.ipv4.tcp_sack = 1
+net.ipv4.tcp_dsack = 1
+net.ipv4.tcp_slow_start_after_idle = 0
+net.ipv4.tcp_window_scaling = 1
+net.ipv4.tcp_adv_win_scale = -2
+net.ipv4.tcp_ecn = 1
+net.ipv4.tcp_ecn_fallback = 1
+net.ipv4.tcp_syncookies = 1
+net.ipv4.udp_mem = 65536 1048576 33554432
+net.ipv6.conf.all.disable_ipv6 = 0
+net.ipv6.conf.default.disable_ipv6 = 0
+net.ipv6.conf.lo.disable_ipv6 = 0
+net.unix.max_dgram_qlen = 256
+vm.min_free_kbytes = 65536
+vm.swappiness = 10
+vm.vfs_cache_pressure = 250
+net.ipv4.conf.default.rp_filter = 2
+net.ipv4.conf.all.rp_filter = 2
+net.ipv4.conf.all.accept_source_route = 0
+net.ipv4.conf.default.accept_source_route = 0
+net.ipv4.neigh.default.gc_thresh1 = 512
+net.ipv4.neigh.default.gc_thresh2 = 2048
+net.ipv4.neigh.default.gc_thresh3 = 16384
+net.ipv4.neigh.default.gc_stale_time = 60
+net.ipv4.conf.default.arp_announce = 2
+net.ipv4.conf.lo.arp_announce = 2
+net.ipv4.conf.all.arp_announce = 2
+kernel.panic = 1
+vm.dirty_ratio = 20
+EOF'
+
+    # Apply the new sysctl settings
+    sudo sysctl -p
+
+    echo -e "${GREEN}TCP settings optimized.${NC}"
+}
+
+# Function to enable BBR
+enable_bbr() {
+    echo -e "${BLUE}Enabling BBR...${NC}"
+
+    # Check if BBR is already enabled
+    if lsmod | grep -q bbr; then
+        echo -e "${GREEN}BBR is already enabled.${NC}"
+    else
+        # Load the TCP BBR module
+        sudo modprobe tcp_bbr
+
+        # Ensure BBR is loaded on boot
+        echo "tcp_bbr" | sudo tee -a /etc/modules-load.d/modules.conf
+
+        # Set BBR as the default congestion control algorithm
+        sudo bash -c 'echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf'
+        sudo bash -c 'echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf'
+
+        # Apply the new sysctl settings
+        sudo sysctl -p
+
+        echo -e "${GREEN}BBR enabled.${NC}"
+    fi
+}
+
+# Main function to perform all optimizations
+optimize_network() {
+    optimize_tcp
+    enable_bbr
+}
+
 # Color codes
 Purple='\033[0;35m'
 Cyan='\033[0;36m'
 CYAN='\033[0;36m'
 YELLOW='\033[0;33m'
 White='\033[0;96m'
+RED='\033[0;31m'
 NC='\033[0m' # No Color 
 
 # Function to display menu
@@ -1063,8 +1325,10 @@ display_menu() {
     echo -e "${White}5. Restart services${NC}"
     echo -e "${Cyan}6. Add & remove cron-job reset timer"
     echo -e "${White}7. Port traffic monitoring"
-    echo -e "${Cyan}8. Change security token"
-    echo -e "${White}9. update script"
+    echo -e "${Cyan}8. Optimize the Network settings${NC}"
+    echo -e "${White}9. Optimize the System Limits${NC}"
+    echo -e "${Cyan}10. Fix TimeZone${NC}"
+    echo -e "${White}11. update_script"
     echo -e "${Cyan}0. Exit"
     echo ''
     echo "-------------------------------"
@@ -1081,8 +1345,10 @@ read_option() {
         5) restart_services ;;
         6) cronjob_main ;;
         7) ports_monitor_menu ;;
-        8) check_security_token ;;
-        9) update_script ;;
+        8) optimize_network;;
+        9) increase_user_limits;;
+        10) set_timezone;;
+        11) update_script ;;
         0) exit 0 ;;
         *) echo -e "${Purple}Invalid option!${NC}" && sleep 1 ;;
     esac
