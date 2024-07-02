@@ -53,21 +53,6 @@ install_dependencies() {
     sudo apt -q update
     sudo apt -y autoremove --purge
 }
-
-# Function to check if the system is Ubuntu or Debian-based
-check_os() {
-    if ! command -v lsb_release &> /dev/null; then
-        echo -e "${Purple}This script requires lsb_release to identify the OS. Please install lsb-release.${NC}"
-        exit 1
-    fi
-
-    os=$(lsb_release -is)
-    if [[ "$os" != "Ubuntu" && "$os" != "Debian" ]]; then
-        echo -e "${Purple}This script only supports Ubuntu and Debian-based systems.${NC}"
-        exit 1
-    fi
-}
-
 check_root() {
     if [[ $EUID -ne 0 ]]; then
         echo -e "${Purple}This script must be run as root. Please run it with sudo.${NC}"
@@ -171,6 +156,70 @@ install_dependencies
 fix_etc_hosts
 fix_dns
 
+# Function to check if the system is Ubuntu or Debian-based
+check_os() {
+    if ! command -v lsb_release &> /dev/null; then
+        echo -e "${Purple}This script requires lsb_release to identify the OS. Please install lsb-release.${NC}"
+        exit 1
+    fi
+
+    os=$(lsb_release -is)
+    if [[ "$os" != "Ubuntu" && "$os" != "Debian" ]]; then
+        echo -e "${Purple}This script only supports Ubuntu and Debian-based systems.${NC}"
+        exit 1
+    fi
+}
+# just press key to continue
+press_key(){
+ read -p "Press any key to continue..."
+}
+
+# Define a function to colorize text
+colorize() {
+    local color="$1"
+    local text="$2"
+    local style="${3:-normal}"
+    
+    # Define ANSI color codes
+    local black="\033[30m"
+    local red="\033[31m"
+    local Purple="\033[0;35m"
+    local yellow="\033[33m"
+    local blue="\033[34m"
+    local magenta="\033[35m"
+    local Cyan="\033[0;36m"
+    local white="\033[37m"
+    local reset="\033[0m"
+    
+    # Define ANSI style codes
+    local normal="\033[0m"
+    local bold="\033[1m"
+    local underline="\033[4m"
+    # Select color code
+    local color_code
+    case $color in
+        black) color_code=$black ;;
+        red) color_code=$red ;;
+        Purple) color_code=$Purple ;;
+        yellow) color_code=$yellow ;;
+        blue) color_code=$blue ;;
+        magenta) color_code=$magenta ;;
+        cyan) color_code=$cyan ;;
+        white) color_code=$white ;;
+        *) color_code=$reset ;;  # Default case, no color
+    esac
+    # Select style code
+    local style_code
+    case $style in
+        bold) style_code=$bold ;;
+        underline) style_code=$underline ;;
+        normal | *) style_code=$normal ;;  # Default case, normal text
+    esac
+
+    # Print the colored and styled text
+    echo -e "${style_code}${color_code}${text}${reset}"
+}
+
 # Function to install unzip if not already installed
 install_unzip() {
     if ! command -v unzip &> /dev/null; then
@@ -182,7 +231,7 @@ install_unzip() {
             sudo apt-get install -y unzip
         else
             echo -e "${Purple}Error: Unsupported package manager. Please install unzip manually.${NC}\n"
-            read -p "Press any key to continue..."
+            press_key
             exit 1
         fi
     fi
@@ -202,7 +251,7 @@ install_jq() {
             sudo apt-get install -y jq
         else
             echo -e "${Purple}Error: Unsupported package manager. Please install jq manually.${NC}\n"
-            read -p "Press any key to continue..."
+            press_key
             exit 1
         fi
     fi
@@ -221,7 +270,7 @@ install_iptables() {
             sudo apt-get install -y iptables
         else
             echo -e "${Purple}Error: Unsupported package manager. Please install iptables manually.${NC}\n"
-            read -p "Press any key to continue..."
+            press_key
             exit 1
         fi
     fi
@@ -240,7 +289,7 @@ install_bc() {
             sudo apt-get install -y bc
         else
             echo -e "${Purple}Error: Unsupported package manager. Please install bc manually.${NC}\n"
-            read -p "Press any key to continue..."
+            press_key
             exit 1
         fi
     fi
@@ -255,13 +304,16 @@ config_dir="/root/rathole-core"
 download_and_extract_rathole() {
     # check if core installed already
     if [[ -d "$config_dir" ]]; then
-        echo -e "${Cyan}Rathole Core is already installed.${NC}"
-        sleep 1
+        if [[ "$1" == "sleep" ]]; then
+        	echo 
+            colorize green "Rathole Core is already installed." bold
+        	sleep 1
+       	fi 
         return 1
     fi
 
     # Define the entry to check/add
-     ENTRY="199.232.68.133 raw.githubusercontent.com"
+     ENTRY="185.199.108.133 raw.githubusercontent.com"
     # Check if the github entry exists in /etc/hosts
     if ! grep -q "$ENTRY" /etc/hosts; then
 	echo "Github Entry not found. Adding to /etc/hosts..."
@@ -280,7 +332,7 @@ download_and_extract_rathole() {
         exit 1
     fi
     if [[ "$ARCH" == "x86_64" ]]; then
-    	DOWNLOAD_URL='https://github.com/iPmartNetwork/RatholeTunnel/releases/download/v0.5.0/rathole-x86_64-unknown-linux-gnu.zip'
+    	DOWNLOAD_URL='https://github.com/Musixal/rathole-tunnel/raw/main/rathole.zip'
     fi
 
     if [ -z "$DOWNLOAD_URL" ]; then
@@ -296,7 +348,7 @@ download_and_extract_rathole() {
     echo -e "Extracting Rathole...\n"
     sleep 1
     unzip -q "$DOWNLOAD_DIR/rathole.zip" -d "$config_dir"
-    echo -e "${Cyan}Rathole installation completed.${NC}\n"
+    echo -e "${GREEN}Rathole installation completed.${NC}\n"
     chmod u+x ${config_dir}/rathole
     rm -rf "$DOWNLOAD_DIR"
 }
@@ -331,64 +383,24 @@ EOF
     echo -e "${NC}"
 }
 
-
 # Function to display server location and IP
 display_server_info() {
     echo -e "\e[93m═════════════════════════════════════════════\e[0m"  
-    echo -e "${Cyan}Server Country:${Purple} $SERVER_COUNTRY"
-    echo -e "${Cyan}Server IP:${Purple} $SERVER_IP"
-    echo -e "${Cyan}Server ISP:${Purple} $SERVER_ISP"
+    echo -e "${cyan}Server Country:${NC} $SERVER_COUNTRY"
+    echo -e "${cyan}Server IP:${NC} $SERVER_IP"
+    echo -e "${cyan}Server ISP:${NC} $SERVER_ISP"
 }
 
 # Function to display Rathole Core installation status
 display_rathole_core_status() {
     if [[ -d "$config_dir" ]]; then
-        echo -e "${Cyan}Rathole Core:${NC} ${Cyan}Installed${NC}"
+        echo -e "${cyan}Rathole Core:${NC} ${yellow}Installed${NC}"
     else
-        echo -e "${Purple}Rathole Core:${NC} ${Purple}Not installed${NC}"
+        echo -e "${cyan}Rathole Core:${NC} ${Purple}Not installed${NC}"
     fi
     echo -e "\e[93m═════════════════════════════════════════════\e[0m"  
 }
 
-
-# Function for configuring tunnel
-configure_tunnel() {
-
-# check if the rathole-core installed or not
-if [[ ! -d "$config_dir" ]]; then
-    echo -e "\n${Purple}Rathole-core directory not found. Install it first through option 1.${NC}\n"
-    read -p "Press Enter to continue..."
-    return 1
-fi
-
-    clear
-    echo -e "${YELLOW}Configurating RatHole Tunnel...${NC}"
-    echo -e "\e[93m═════════════════════════════════════════════\e[0m" 
-    echo ''
-    echo -e "1. For ${Cyan}IRAN Server\n${NC}"
-    echo -e "2. For ${Purple}Kharej Server\n${NC}"
-    read -p "Enter your choice: " configure_choice
-    case "$configure_choice" in
-        1) iran_server_configuration ;;
-        2) kharej_server_configuration ;;
-        *) echo -e "${Purple}Invalid option!${Purple}" && sleep 1 ;;
-    esac
-    echo ''
-    read -p "Press Enter to continue..."
-}
-
-
-#Global Variables
-     config_dir="/root/rathole-core"
-     iran_config_file="${config_dir}/server.toml"
-     iran_service_name="rathole-iran.service"
-     iran_service_file="/etc/systemd/system/${iran_service_name}"
-
-    kharej_config_file="${config_dir}/client.toml"
-    kharej_service_name="rathole-kharej.service"
-    kharej_service_file="/etc/systemd/system/${kharej_service_name}"
-    
-    
 # Function to check if a given string is a valid IPv6 address
 check_ipv6() {
     local ip=$1
@@ -405,103 +417,173 @@ check_ipv6() {
     fi
 }
 
+check_port() {
+    local PORT=$1
+
+    if [ -z "$PORT" ]; then
+        echo "Usage: check_port <port>"
+        return 1
+    fi
+
+    if ss -tuln | grep ":$PORT" > /dev/null; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Function for configuring tunnel
+configure_tunnel() {
+
+# check if the rathole-core installed or not
+if [[ ! -d "$config_dir" ]]; then
+    echo -e "\n${Purple}Rathole-core directory not found. Install it first through option 8.${NC}\n"
+    read -p "Press Enter to continue..."
+    return 1
+fi
+
+    clear
+    colorize cyan "Configurating rathole tunnel menu" bold
+    echo
+    colorize cyan "1. Configure for iran server"
+    colorize Purple "2. Configure for kharej server"
+    echo
+    read -p "Enter your choice: " configure_choice
+    case "$configure_choice" in
+        1) iran_server_configuration ;;
+        2) kharej_server_configuration ;;
+        *) echo -e "${Purple}Invalid option!${NC}" && sleep 1 ;;
+    esac
+    echo
+    read -p "Press Enter to continue..."
+}
+
+
+#Global Variables
+service_dir="/etc/systemd/system"
+  
 # Function to configure Iran server
 iran_server_configuration() {  
     clear
-    echo -e "${YELLOW}Configuring IRAN server...${NC}\n" 
-    
-    # Read the tunnel port
-    read -p "Enter the tunnel port: " tunnel_port
-    while true; do
-	    echo -ne "[#] Tunnel port: "
+    colorize cyan "Configuring IRAN server" bold
+    echo
+	
+	while true; do
+	    echo -ne "[*] Tunnel port: "
 	    read -r tunnel_port
 	
 	    if [[ "$tunnel_port" =~ ^[0-9]+$ ]] && [ "$tunnel_port" -gt 22 ] && [ "$tunnel_port" -le 65535 ]; then
 	        if check_port $tunnel_port; then
-	            colorize red "Port $tunnel_port is in use."
+	            colorize Purple "Port $tunnel_port is in use."
 	        else
 	            break
 	        fi
 	    else
-	        colorize red "Please enter a valid port number between 23 and 65535"
+	        colorize Purple "Please enter a valid port number between 23 and 65535"
 	    fi
 	done
 
     
-    echo''
-    # Read the number of config ports and read each port
-    read -p "Enter the number of your configs: " num_ports
-    while true; do
-	    echo -ne "[*] Number of your configs: "
+    echo
+    
+	# Read the number of config ports and read each port
+	while true; do
+	    echo -ne " Number of your configs: "
 	    read -r num_ports
 	
 	    if [[ "$num_ports" =~ ^[0-9]+$ ]] && [ "$num_ports" -gt 0 ] && [ "$num_ports" -lt 100 ]; then
 	        break
 	    else
-	        colorize red "Please enter a valid number greater than 0 and lower than 100"
+	        colorize Purple "Please enter a valid number greater than 0 and lower than 100"
 	    fi
 	done
     
     
-    echo ''
-    config_ports=()
-    for ((i=1; i<=$num_ports; i++)); do
-        read -p "Enter Config Port $i: " port
-        while ! [[ "$port" =~ ^[0-9]+$ ]]; do
-            echo -e "${Purple}Please enter a valid port number.${NC}"
-            read -p "Enter Config Port $i: " port
-        done
-        config_ports+=("$port")
-    done
+    echo
+    
+	# Read each config port
+	config_ports=()
+	for ((i=1; i<=$num_ports; i++)); do
+	    while true; do
+	        echo -ne " Enter port for config $i: "
+	        read -r port
+	
+	        if [[ "$port" =~ ^[0-9]+$ ]] && [ "$port" -gt 22 ] && [ "$port" -le 65535 ]; then
+	            if check_port $port; then
+	                colorize red "Port $port is in use."
+	            else
+	                config_ports+=("$port")
+	                break
+	            fi
+	        else
+	            colorize red "Please enter a valid port number between 23 and 65535"
+	        fi
+	    done
+	done
 
-echo ''
 
-# Initialize transport variable
-local transport=""
+	echo
+	
+	# Initialize transport variable
+	local transport=""
+	# Keep prompting the user until a valid input is provided
+	while [[ "$transport" != "tcp" && "$transport" != "udp" ]]; do
+	    # Prompt the user to input transport type
+	    echo -ne " Transport type (tcp/udp): " 
+	    read -r transport
+	
+	    # Check if the input is either tcp or udp
+	    if [[ "$transport" != "tcp" && "$transport" != "udp" ]]; then
+	        colorize red "Invalid transport type. Please enter 'tcp' or 'udp'"
+	    fi
+	done
+	
+	echo
+	
+	# Initialize nodelay variable
+	local nodelay=""
+	# Keep prompting the user until a valid input is provided
+	while [[ "$nodelay" != "true" && "$nodelay" != "false" ]]; do
+	    echo -ne " TCP_NODELAY (true/false): " 
+	    read -r nodelay
+	    if [[ "$nodelay" != "true" && "$nodelay" != "false" ]]; then
+	        colorize red "Invalid nodelay input. Please enter 'true' or 'false'"
+	    fi
+	done
 
-# Keep prompting the user until a valid input is provided
-while [[ "$transport" != "tcp" && "$transport" != "udp" ]]; do
-    # Prompt the user to input transport type
-    read -p "Enter transport type (tcp/udp): " transport
+	echo 
 
-    # Check if the input is either tcp or udp
-    if [[ "$transport" != "tcp" && "$transport" != "udp" ]]; then
-        echo -e "${Purple}Invalid transport type. Please enter 'tcp' or 'udp'.${NC}"
-    fi
-done
+	echo -ne "[-] Security Token (press enter to use default value): "
+	read -r token
+	if [[ -z "$token" ]]; then
+		token="iPmart"
+	fi
+		
+	echo
 
-echo ''
-# Initialize nodelay variable
-local nodelay=""
-# Keep prompting the user until a valid input is provided
-while [[ "$nodelay" != "true" && "$nodelay" != "false" ]]; do
-    read -p "TCP No-Delay (true / false): " nodelay
-    if [[ "$nodelay" != "true" && "$nodelay" != "false" ]]; then
-        echo -e "${Purple}Invalid nodelay input. Please enter 'true' or 'false'.${NC}"
-    fi
-done
+	#Add IPv6 Support
+	local_ip='0.0.0.0'
+	read -p "[-] Listen for IPv6 address? (y/n): " answer
+	echo
+	if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
+	    colorize cyan "IPv6 Enabled"
+	    local_ip='[::]'
+	elif [ "$answer" = "n" ]; then
+	    colorize cyan "IPv4 Enabled"
+	    local_ip='0.0.0.0'
+	else
+	    colorize cyan "Invalid choice. IPv4 enabled by default."
+	    local_ip='0.0.0.0'
+	fi
 
-echo ''
-local_ip='0.0.0.0'
 
-#Add IPv6 Support
-read -p "Do you want to use IPv6 for connecting? (yes/no): " answer
-echo ''
-if [ "$answer" = "yes" ]; then
-    echo -e "${Cyan}IPv6 selected.${NC}"
-    local_ip='[::]'
-elif [ "$answer" = "no" ]; then
-    echo -e "${Cyan}IPv4 selected.${NC}"
-else
-    echo -e "${YELLOW}Invalid choice. IPv4 selected by default.${NC}"
-fi
-sleep 1
+
 
     # Generate server configuration file
-    cat << EOF > "$iran_config_file"
+    cat << EOF > "${config_dir}/iran${tunnel_port}.toml"
 [server]
 bind_addr = "${local_ip}:${tunnel_port}"
-default_token = "iPmart_tunnel"
+default_token = "$token"
 heartbeat_interval = 30
 
 [server.transport]
@@ -514,27 +596,25 @@ EOF
 
     # Add each config port to the configuration file
     for port in "${config_ports[@]}"; do
-        cat << EOF >> "$iran_config_file"
+        cat << EOF >> "${config_dir}/iran${tunnel_port}.toml"
 [server.services.${port}]
 type = "$transport"
 bind_addr = "${local_ip}:${port}"
 
 EOF
     done
-    
-    echo ''
-    echo -e "${Cyan}IRAN server configuration completed.${NC}\n"
-    echo -e "Starting Rathole server as a service...\n"
+
+    echo 
 
     # Create the systemd service unit file
-    cat << EOF > "$iran_service_file"
+    cat << EOF > "${service_dir}/rathole-iran${tunnel_port}.service"
 [Unit]
-Description=Rathole Server (Iran)
+Description=Rathole Iran Port $tunnel_port (Iran)
 After=network.target
 
 [Service]
 Type=simple
-ExecStart=${config_dir}/rathole ${iran_config_file}
+ExecStart=${config_dir}/rathole ${config_dir}/iran${tunnel_port}.toml
 Restart=always
 RestartSec=3
 
@@ -543,128 +623,137 @@ WantedBy=multi-user.target
 EOF
 
     # Reload systemd to read the new unit file
-    if systemctl daemon-reload; then
-        echo "Systemd daemon reloaded."
-    else
-        echo -e "${Purple}Failed to reload systemd daemon. Please check your system configuration.${NC}"
-        return 1
-    fi
+    systemctl daemon-reload >/dev/null 2>&1
 
-    # Enable the service to start on boot
-    if systemctl enable "$iran_service_name"; then
-        echo -e "${Cyan}Service '$iran_service_name' enabled to start on boot.${NC}"
+    # Enable and start the service to start on boot
+    if systemctl enable --now "${service_dir}/rathole-iran${tunnel_port}.service" >/dev/null 2>&1; then
+        colorize cyan "Iran service with port $tunnel_port enabled to start on boot and started."
     else
-        echo -e "${Purple}Failed to enable service '$iran_service_name'. Please check your system configuration.${NC}"
+        colorize red "Failed to enable service with port $tunnel_port. Please check your system configuration."
         return 1
     fi
-
-    # Start the service
-    if systemctl start "$iran_service_name"; then
-        echo -e "${Cyan}Service '$iran_service_name' started.${NC}"
-    else
-        echo -e "${Purple}Failed to start service '$service_name'. Please check your system configuration.${NC}"
-        return 1
-    fi
+     
+    echo
+    colorize cyan "IRAN server configuration completed successfully."
 }
 
 # Function for configuring Kharej server
 kharej_server_configuration() {
     clear
-    echo -e "${Cyan}Configuring kharej server...${NC}\n"
+    colorize cyan "Configuring kharej server" bold 
+    echo
+ 
+	# Prompt for IRAN server IP address
+	while true; do
+	    echo -ne " IRAN server IP address [IPv4/IPv6]: " 
+	    read -r SERVER_ADDR
+	    if [[ -n "$SERVER_ADDR" ]]; then
+	        break
+	    else
+	        colorize Purple "Server address cannot be empty. Please enter a valid address."
+	        echo
+	    fi
+	done
+	
+    echo
     
-    while true; do
-    read -p "How many IRAN servers do you have: " SERVER_NUM
-    if [[ $SERVER_NUM =~ ^[0-9]+$ ]] && [ $SERVER_NUM -ge 1 ] && [ $SERVER_NUM -le 99 ]; then
-        break
-    else
-        echo -e "${Purple}Please enter a number between 1 and 99${NC}"
-    fi
-done
-
-    
-    local EXEC_COMMAND="/bin/bash -c '"
-    
-#___________________________________________________________________ Start of the loop  
-
-for ((j=1; j<=$SERVER_NUM; j++)); do
-
-    clear
-    echo -e "${cyan}Let's create a tunnel for server $j${NC}" 
-    echo -e "\e[93m═════════════════════════════════════════════\e[0m"  
-    echo ''    
-    # Read the server address
-    read -p "Enter the IRAN server address [IPv4/IPv6]: " SERVER_ADDR
-
-    echo ''
     # Read the tunnel port
-    read -p "Enter the tunnel port: " tunnel_port
-    while ! [[ "$tunnel_port" =~ ^[0-9]+$ ]]; do
-        echo -e "${Purple}Please enter a valid port number.${NC}"
-        read -p "Enter the tunnel port: " tunnel_port
-    done
+ 	while true; do
+	    echo -ne " Tunnel port: "
+	    read -r tunnel_port
+	
+	    if [[ "$tunnel_port" =~ ^[0-9]+$ ]] && [ "$tunnel_port" -gt 22 ] && [ "$tunnel_port" -le 65535 ]; then
+	        if check_port $tunnel_port; then
+	            colorize Purple "Port $tunnel_port is in use."
+	        else
+	            break
+	        fi
+	    else
+	        colorize Purple "Please enter a valid port number between 23 and 65535"
+	    fi
+	done
     
-    echo ''
+    echo
+    
     # Read the number of config ports and read each port
-    read -p "Enter the number of your configs: " num_ports
+    echo -ne " Number of your configs: " 
+    read -r num_ports
     while ! [[ "$num_ports" =~ ^[0-9]+$ ]]; do
-        echo -e "${Purple}Please enter a valid number.${NC}"
-        read -p "Enter the number of your configs: " num_ports
+        colorize red "Please enter a valid number."
+	    echo -ne " Number of your configs: " 
+	    read -r num_ports
     done
     
-    echo ''
-    config_ports=()
-    for ((i=1; i<=$num_ports; i++)); do
-        read -p "Enter Config Port $i: " port
-        while ! [[ "$port" =~ ^[0-9]+$ ]]; do
-            echo -e "${Purple}Please enter a valid port number.${NC}"
-            read -p "Enter Config Port $i: " port
-        done
-        config_ports+=("$port")
-    done
+    echo
+    
+	# Read each config port
+	config_ports=()
+	for ((i=1; i<=$num_ports; i++)); do
+	    while true; do
+	        echo -ne " Enter port for config $i: "
+	        read -r port
+	
+	        if [[ "$port" =~ ^[0-9]+$ ]] && [ "$port" -gt 22 ] && [ "$port" -le 65535 ]; then
+	                config_ports+=("$port")
+	                break
+	        else
+	            colorize Purple "Please enter a valid port number between 23 and 65535"
+	        fi
+	    done
+	done
 
-    echo ''
+
+    echo
+    
     # Initialize transport variable
     local transport=""
 
-    # Keep prompting the user until a valid input is provided
-while [[ "$transport" != "tcp" && "$transport" != "udp" ]]; do
-    # Prompt the user to input transport type
-    read -p "Enter transport type (tcp/udp): " transport
+	# Keep prompting the user until a valid input is provided
+	while [[ "$transport" != "tcp" && "$transport" != "udp" ]]; do
+	    # Prompt the user to input transport type
+	    echo -ne "[*] Transport type (tcp/udp): " 
+	    read -r transport
+	
+	    # Check if the input is either tcp or udp
+	    if [[ "$transport" != "tcp" && "$transport" != "udp" ]]; then
+	        colorize red "Invalid transport type. Please enter 'tcp' or 'udp'"
+	    fi
+	done
 
-    # Check if the input is either tcp or udp
-    if [[ "$transport" != "tcp" && "$transport" != "udp" ]]; then
-        echo -e "${Purple}Invalid transport type. Please enter 'tcp' or 'udp'.${NC}"
-    fi
-done
-
-	echo ''
+	echo
+	
 	# Initialize nodelay variable
 	local nodelay=""
 	# Keep prompting the user until a valid input is provided
 	while [[ "$nodelay" != "true" && "$nodelay" != "false" ]]; do
-   		read -p "TCP No-Delay (true / false): " nodelay
-   		if [[ "$nodelay" != "true" && "$nodelay" != "false" ]]; then
-      		  echo -e "${Purple}Invalid nodelay input. Please enter 'true' or 'false'.${NC}"
-   		fi
+	    echo -ne "[*] TCP_NODELAY (true/false): " 
+	    read -r nodelay
+	    if [[ "$nodelay" != "true" && "$nodelay" != "false" ]]; then
+	        colorize red "Invalid nodelay input. Please enter 'true' or 'false'"
+	    fi
 	done
 
-    #this new format allow us to build various client_port.toml 
-    local kharej_config_file="${config_dir}/client_p${tunnel_port}.toml"
+	echo
+	echo -ne "[-] Security Token (press enter to use default value): "
+	read -r token
+	if [[ -z "$token" ]]; then
+		token="musixal"
+	fi
 
-#Add IPv6 Support
-local_ip='0.0.0.0'
-if check_ipv6 "$SERVER_ADDR"; then
-    local_ip='[::]'
-    # Remove brackets if present
-    SERVER_ADDR="${SERVER_ADDR#[}"
-    SERVER_ADDR="${SERVER_ADDR%]}"
-fi
+	#Add IPv6 Support
+	local_ip='0.0.0.0'
+	if check_ipv6 "$SERVER_ADDR"; then
+	    local_ip='[::]'
+	    # Remove brackets if present
+	    SERVER_ADDR="${SERVER_ADDR#[}"
+	    SERVER_ADDR="${SERVER_ADDR%]}"
+	fi
 
-# Generate server configuration file
-    cat << EOF > "$kharej_config_file"
+    # Generate server configuration file
+    cat << EOF > "${config_dir}/kharej${tunnel_port}.toml"
 [client]
 remote_addr = "${SERVER_ADDR}:${tunnel_port}"
-default_token = "iPmart_tunnel"
+default_token = "$token"
 heartbeat_timeout = 40
 retry_interval = 1
 
@@ -678,39 +767,25 @@ EOF
 
     # Add each config port to the configuration file
     for port in "${config_ports[@]}"; do
-        cat << EOF >> "$kharej_config_file"
+        cat << EOF >> "${config_dir}/kharej${tunnel_port}.toml"
 [client.services.${port}]
 type = "$transport"
 local_addr = "${local_ip}:${port}"
 
 EOF
     done
-
-# Now modify ExecCommand for our service file
-    EXEC_COMMAND+="${config_dir}/rathole ${kharej_config_file} & "
-    sleep 1
-done
-  
-#______________________________________________________________________________End of the loop
     
-    #delete last &
-    EXEC_COMMAND="${EXEC_COMMAND% & }"
-    #Need that last '
-    EXEC_COMMAND+="'"
-    
-    echo ''
-    echo -e "${Cyan}Kharej server configuration completed.${NC}\n"
-    echo -e "${Cyan}Starting Rathole server as a service...${NC}\n"
+    echo
 
     # Create the systemd service unit file
-    cat << EOF > "$kharej_service_file"
+    cat << EOF > "${service_dir}/rathole-kharej${tunnel_port}.service"
 [Unit]
-Description=Rathole Server (Kharej)
+Description=Rathole Kharej Port $tunnel_port 
 After=network.target
 
 [Service]
 Type=simple
-ExecStart=$EXEC_COMMAND
+ExecStart=${config_dir}/rathole ${config_dir}/kharej${tunnel_port}.toml
 Restart=always
 RestartSec=3
 
@@ -719,161 +794,258 @@ WantedBy=multi-user.target
 EOF
 
     # Reload systemd to read the new unit file
-    if systemctl daemon-reload; then
-        echo "Systemd daemon reloaded."
+    systemctl daemon-reload >/dev/null 2>&1
+
+    # Enable and start the service to start on boot
+    if systemctl enable --now "${service_dir}/rathole-kharej${tunnel_port}.service" >/dev/null 2>&1; then
+        colorize cyan "Kharej service with port $tunnel_port enabled to start on boot and started."
     else
-        echo -e "${Purple}Failed to reload systemd daemon. Please check your system configuration.${NC}"
+        colorize Purple "Failed to enable service with port $tunnel_port. Please check your system configuration."
         return 1
     fi
 
-    # Enable the service to start on boot
-    if systemctl enable "$kharej_service_name" >/dev/null 2>&1; then
-        echo -e "${Cyan}Service '$kharej_service_name' enabled to start on boot.${NC}"
-    else
-        echo -e "${Purple}Failed to enable service '$kharej_service_name'. Please check your system configuration.${NC}"
-        return 1
-    fi
-
-    # Start the service
-    if systemctl start "$kharej_service_name"; then
-        echo -e "${Cyan}Service '$kharej_service_name' started.${NC}"
-    else
-        echo -e "${Purple}Failed to start service '$kharej_service_name'. Please check your system configuration.${NC}"
-        return 1
-    fi
-
-}
-
-# Function for destroying tunnel
-destroy_tunnel() {
-    echo ''
-    echo -e "${YELLOW}Destroying tunnel...${NC}\n"
-    sleep 1
-    
-    # Prompt to confirm before removing Rathole-core directory
-    read -p "Are you sure you want to remove Rathole-core? (y/n): " confirm
-    echo ''
-    
-if [[ $confirm == [yY] ]]; then
-    if [[ -d "$config_dir" ]]; then
-        rm -rf "$config_dir"
-        echo -e "${Cyan}Rathole-core directory removed.${NC}\n"
-    else
-        echo -e "${Purple}Rathole-core directory not found.${NC}\n"
-    fi
-else
-    echo -e "${YELLOW}Rathole core removal canceled.${NC}\n"
-fi
-
-
-# Check if server.toml exists and delete it
-if [ -f "$iran_config_file" ]; then
-  rm -f "$iran_config_file"
-fi
-
-# Check if client.toml exists and delete it
-if ls $kharej_config_file 1> /dev/null 2>&1; then
-    for file in $kharej_config_file; do
-         rm -f $file
-    done
-fi
-
-    # remove cronjob created by thi script
-    delete_cron_job 
-    echo ''
-    # Stop and disable the client service if it exists
-    if [[ -f "$kharej_service_file" ]]; then
-        if systemctl is-active "$kharej_service_name" &>/dev/null; then
-            systemctl stop "$kharej_service_name"
-            systemctl disable "$kharej_service_name"
-        fi
-        rm -f "$kharej_service_file"
-    fi
-
-
-    # Stop and disable the Iran server service if it exists
-    if [[ -f "$iran_service_file" ]]; then
-        if systemctl is-active "$iran_service_name" &>/dev/null; then
-            systemctl stop "$iran_service_name"
-            systemctl disable "$iran_service_name"
-        fi
-        rm -f "$iran_service_file"
-    fi
-    
-    echo ''
-    # Reload systemd to read the new unit file
-    if systemctl daemon-reload; then
-        echo -e "Systemd daemon reloaded.\n"
-    else
-        echo -e "${Purple}Failed to reload systemd daemon. Please check your system configuration.${NC}"
-    fi
-    
-    echo -e "${Cyan}Tunnel destroyed successfully!${NC}\n"
-    read -p "Press Enter to continue..."
+    echo
+    colorize cyan "Kharej server configuration completed successfully."
 }
 
 
 # Function for checking tunnel status
 check_tunnel_status() {
-    echo ''
-    echo -e "${YELLOW}Checking tunnel status...${NC}\n"
+    echo
+    
+	# Check for .toml files
+	if ! ls "$config_dir"/*.toml 1> /dev/null 2>&1; then
+	    colorize red "No config files found in the rathole directory." bold
+	    echo 
+	    press_key
+	    return 1
+	fi
+
+	clear
+    colorize yellow "Checking all services status..." bold
     sleep 1
+    echo
+    for config_path in "$config_dir"/iran*.toml; do
+        if [ -f "$config_path" ]; then
+            # Extract config_name without directory path and change it to service name
+			config_name=$(basename "$config_path")
+			config_name="${config_name%.toml}"
+			service_name="rathole-${config_name}.service"
+            config_port="${config_name#iran}"
+            
+			# Check if the rathole-client-kharej service is active
+			if systemctl is-active --quiet "$service_name"; then
+				colorize cyan "Iran service with tunnel port $config_port is running"
+			else
+				colorize Purple "Iran service with tunnel port $config_port is not running"
+			fi
+   		fi
+    done
     
-    # Check if the rathole-client-kharej service is active
-    if systemctl is-active --quiet "$kharej_service_name"; then
-        echo -e "${Cyan}Kharej service is running on this server.${NC}"
-    else
-        echo -e "${Purple}Kharej service is not running on this server.${NC}"
-    fi
+    for config_path in "$config_dir"/kharej*.toml; do
+        if [ -f "$config_path" ]; then
+            # Extract config_name without directory path and change it to service name
+			config_name=$(basename "$config_path")
+			config_name="${config_name%.toml}"
+			service_name="rathole-${config_name}.service"
+            config_port="${config_name#kharej}"
+            
+			# Check if the rathole-client-kharej service is active
+			if systemctl is-active --quiet "$service_name"; then
+				colorize green "Kharej service with tunnel port $config_port is running"
+			else
+				colorize red "Kharej service with tunnel port $config_port is not running"
+			fi
+   		fi
+    done
     
-    echo ''
-    # Check if the rathole-server-iran service is active
-    if systemctl is-active --quiet "$iran_service_name"; then
-        echo -e "${Cyan}IRAN service is running on this server..${NC}"
-    else
-        echo -e "${Purple}IRAN service is not running on this server..${NC}"
-    fi
-    echo ''
-    read -p "Press Enter to continue..."
+    
+    echo
+    press_key
 }
+
+
+# Function for destroying tunnel
+tunnel_management() {
+	echo
+	# Check for .toml files
+	if ! ls "$config_dir"/*.toml 1> /dev/null 2>&1; then
+	    colorize red "No config files found in the rathole directory." bold
+	    echo 
+	    press_key
+	    return 1
+	fi
+	
+	clear
+	colorize cyan "List of existing services to manage:" bold
+	echo 
+	
+	#Variables
+    local index=1
+    declare -a configs
+
+    for config_path in "$config_dir"/iran*.toml; do
+        if [ -f "$config_path" ]; then
+            # Extract config_name without directory path
+            config_name=$(basename "$config_path")
+            
+            # Remove "iran" prefix and ".toml" suffix
+            config_port="${config_name#iran}"
+            config_port="${config_port%.toml}"
+            
+            configs+=("$config_path")
+            echo -e "${MAGENTA}${index}${NC}) ${GREEN}Iran${NC} service, Tunnel port: ${YELLOW}$config_port${NC}"
+            ((index++))
+        fi
+    done
+    
+
+    
+    for config_path in "$config_dir"/kharej*.toml; do
+        if [ -f "$config_path" ]; then
+            # Extract config_name without directory path
+            config_name=$(basename "$config_path")
+            
+            # Remove "kharej" prefix and ".toml" suffix
+            config_port="${config_name#kharej}"
+            config_port="${config_port%.toml}"
+            
+            configs+=("$config_path")
+            echo -e "${MAGENTA}${index}${NC}) ${GREEN}Kharej${NC} service, Tunnel port: ${YELLOW}$config_port${NC}"
+            ((index++))
+        fi
+    done
+    
+    echo
+	echo -ne "Enter your choice (0 to return): "
+    read choice 
+	
+	# Check if the user chose to return
+	if (( choice == 0 )); then
+	    return
+	fi
+	#  validation
+	while ! [[ "$choice" =~ ^[0-9]+$ ]] || (( choice < 0 || choice > ${#configs[@]} )); do
+	    colorize red "Invalid choice. Please enter a number between 1 and ${#configs[@]}." bold
+	    echo
+	    echo -ne "Enter your choice (0 to return): "
+	    read choice
+		if (( choice == 0 )); then
+			return
+		fi
+	done
+	
+	selected_config="${configs[$((choice - 1))]}"
+	config_name=$(basename "${selected_config%.toml}")
+	service_name="rathole-${config_name}.service"
+	  
+	clear
+	colorize cyan "List of available commands for $config_name:" bold
+	echo 
+	colorize red "1) Remove this tunnel"
+	colorize yellow "2) Restart this tunnel"
+	colorize green "3) Add a new config for this tunnel"
+	colorize reset "4) Add a cronjob for this tunnel"
+	colorize reset "5) Remove existing cronjob for this tunnel"
+	echo 
+	read -p "Enter your choice (0 to return): " choice
+	
+    case $choice in
+        1) destroy_tunnel "$selected_config" ;;
+        2) restart_service "$service_name" ;;
+        3) add_new_config "$selected_config" ;;
+        4) add_cron_job_menu "$service_name";;
+        5) delete_cron_job "$service_name";;
+        0) return 1 ;;
+        *) echo -e "${RED}Invalid option!${NC}" && sleep 1 && return 1;;
+    esac
+	
+}
+
+destroy_tunnel(){
+	echo
+	#Vaiables
+	config_path="$1"
+	config_name=$(basename "${config_path%.toml}")
+    service_name="rathole-${config_name}.service"
+    service_path="$service_dir/$service_name"
+    
+	# Prompt to confirm before removing Rathole-core directory
+    echo -ne "${YELLOW}Do you want to remove Rathole-core? (y/n)${NC}: " 
+    read -r confirm
+	echo     
+	if [[ $confirm == [yY] ]]; then
+	    if [[ -d "$config_dir" ]]; then
+	        rm -rf "$config_dir" >/dev/null 2>&1
+	        echo -e "${Purple}Rathole-core directory removed.${NC}\n"
+	    else
+	        echo -e "${Purple}Rathole-core directory not found.${NC}\n"
+	    fi
+	else
+	    echo -e "${YELLOW}Rathole core removal canceled.${NC}"
+	fi
+
+	# Check if config exists and delete it
+	if [ -f "$config_path" ]; then
+	  rm -f "$config_path" >/dev/null 2>&1
+	fi
+
+    delete_cron_job $service_name
+    
+        # Stop and disable the client service if it exists
+    if [[ -f "$service_path" ]]; then
+        if systemctl is-active "$service_name" &>/dev/null; then
+            systemctl disable --now "$service_name" >/dev/null 2>&1
+        fi
+        rm -f "$service_path" >/dev/null 2>&1
+    fi
+    
+        
+    echo
+    # Reload systemd to read the new unit file
+    if systemctl daemon-reload >/dev/null 2>&1 ; then
+        echo -e "Systemd daemon reloaded.\n"
+    else
+        echo -e "${Purple}Failed to reload systemd daemon. Please check your system configuration.${NC}"
+    fi
+    
+    echo -e "${cyan}Tunnel destroyed successfully!${NC}\n"
+    sleep 1
+
+}
+
 
 #Function to restart services
-restart_services() {
-    echo ''
-    echo -e "${YELLOW}Restarting IRAN & Kharej services...${NC}\n"
-    sleep 1
-    # Check if rathole-client-kharej.service exists
-    if systemctl list-units --type=service | grep -q "$kharej_service_name"; then
-        systemctl restart "$kharej_service_name"
-        echo -e "${Cyan}Kharej service restarted.${NC}"
-    fi
-
-    # Check if rathole-server-iran.service exists
-    if systemctl list-units --type=service | grep -q "$iran_service_name"; then
-        systemctl restart "$iran_service_name"
-        echo -e "${Cyan}IRAN service restarted.${NC}"
-    fi
-
-    # If neither service exists
-    if ! systemctl list-units --type=service | grep -q "$kharej_service_name" && \
-       ! systemctl list-units --type=service | grep -q "$iran_service_name"; then
-        echo -e "${Purple}There is no service to restart.${NC}"
-    fi
+restart_service() {
+    echo
+    service_name="$1"
+    colorize yellow "Restarting $service_name" bold
+    echo
     
-     echo ''
-     read -p "Press Enter to continue..."
+    # Check if service exists
+    if systemctl list-units --type=service | grep -q "$service_name"; then
+        systemctl restart "$service_name"
+        colorize green "Service restarted successfully"
+
+    else
+        colorize red "Cannot restart the service" 
+    fi
+    echo
+    press_key
 }
+
 
 # Function to add cron-tab job
 add_cron_job() {
-    local reset_path=$1
-    local restart_time=$2
+    local restart_time="$1"
+    local reset_path="$2"
+    local service_name="$3"
 
     # Save existing crontab to a temporary file
     crontab -l > /tmp/crontab.tmp
 
     # Append the new cron job to the temporary file
-    echo "$restart_time $reset_path # Added by rathole_script" >> /tmp/crontab.tmp
+    echo "$restart_time $reset_path #$service_name" >> /tmp/crontab.tmp
 
     # Install the modified crontab from the temporary file
     crontab /tmp/crontab.tmp
@@ -882,62 +1054,27 @@ add_cron_job() {
     rm /tmp/crontab.tmp
 }
 delete_cron_job() {
-    # Delete all cron jobs added by this script
-    crontab -l | grep -v '# Added by rathole_script' | crontab -
-    rm -f /etc/reset.sh >/dev/null 2>&1
-    echo -e "${Cyan}Cron jobs added by this script have been deleted successfully.${NC}"
+    echo
+    local service_name="$1"
+    
+    crontab -l | grep -v "#$service_name" | crontab -
+    rm -f "$config_dir/${service_name%.service}.sh" >/dev/null 2>&1
+    
+    colorize cyan "Cron job for $service_name deleted successfully." bold
+    sleep 2
 }
 
+add_new_config(){
+    echo
+    colorize yellow "Under construction..." bold
+    sleep 1
 
-# Main function to add or delete cron job for restarting services
-cronjob_main() {
-     clear
-     # Prompt user for action
-    echo -e "Select an option: \n"
-    echo -e "${CYAN}1. Add a cron-job to restart a service${NC}\n"
-    echo -e "${Purple}2. Delete cron jobs added by this script${NC}\n"
-    read -p "Enter your choice: " action_choice
-    echo ''
-    # Validate user input
-    case $action_choice in
-        1)
-            add_cron_job_menu
-            ;;
-        2)
-            delete_cron_job
-            ;;
-        *)
-            echo -e "${Purple}Invalid choice. Please enter 1 or 2.${NC}"
-            return 1
-            ;;
-    esac
-    echo ''
-    read -p "Press Enter to continue..."
 }
 
 add_cron_job_menu() {
-    clear
-    # Prompt user to choose a service
-    echo -e "Select the service you want to restart:\n"
-    echo -e "${CYAN}1. Kharej service${NC}"
-    echo -e "${Cyan}2. IRAN service${NC}"
-    echo ''
-    read -p "Enter your choice: " service_choice
-    echo ''
-    # Validate user input
-    case $service_choice in
-        1)
-            service_name="$kharej_service_name"
-            ;;
-        2)
-            service_name="$iran_service_name"
-            ;;
-        *)
-            echo -e "${Purple}Invalid choice. Please enter 1 or 2.${NC}"
-            return 1
-            ;;
-    esac
-
+    echo
+    service_name="$1"
+    
     # Prompt user to choose a restart time interval
     echo "Select the restart time interval:"
     echo ''
@@ -1024,6 +1161,16 @@ EOF
     echo -e "${Cyan}Cron-job added successfully to restart the service '$service_name'.${NC}"
 }
 
+# main maenu for showing ports monitoring options
+ports_monitor_menu(){
+    clear
+    # Prompt user to choose a option
+    echo -e "Select the option you want to do:\n"
+    echo -e "${cyan}1. Add ports for monitoring traffic${NC}\n"
+    echo -e "${Cyan}2. View traffic usage${NC}\n"
+    echo -e "${Purple}3. Remove iptables rules${NC}\n"
+    read -p "Enter your choice: " option_choice
+    echo ''
     # Validate user input
     case $option_choice in
         1)
@@ -1079,36 +1226,6 @@ draw_line() {
 draw_row() {
     printf "| %-8s | %-10s |\n" "$1" "$2"
 }
-
-# Main function to draw the table
-view_traffic_usage() {
-	clear
-    draw_line
-    draw_row "Port" "Traffic (B)"
-    draw_line
-    # Use command substitution to get port numbers dynamically
-    ports=$(iptables -L -v --numeric | grep -i -w "rathole" | grep -o 'tcp dpt:[0-9]\+' | awk -F':' '{print $2}')
-    # Use command substitution to get traffic information dynamically
-    traffic=$(iptables -L -v --numeric | grep -i -w "rathole" | awk '{print $2}')
-    for port in $ports; do
-        # Find the corresponding traffic value for each port
-        index=$(echo $ports | tr ' ' '\n' | grep -n -w $port | cut -d ':' -f1)
-        traffic_val=$(echo $traffic | tr ' ' '\n' | sed -n ${index}p)
-        draw_row "$port" "$traffic_val"
-    done
-    draw_line
-    echo ''
-    read -p "Press any key to continue..."
-}
-
-del_iptables_rules(){
-	iptables-save | grep -v 'rathole' > /tmp/iptables-filtered.rules
-	iptables-restore < /tmp/iptables-filtered.rules
-    echo -e "${Cyan}All iptables rules related to this script deleted successfully${NC}"
-    echo ''
-    read -p "Press any key to continue..."
-}
-
 # Function to check the security token
 check_security_token() {
 echo ''
@@ -1178,6 +1295,7 @@ RATHOLE_SCRIPT="rathole"
 SCRIPT_URL="https://github.com/iPmartNetwork/RatholeTunnel/raw/main/iPmart.sh"
 
 echo ''
+
 # Check if rathole.sh exists in /bin/bash
 if [ -f "$DEST_DIR/$RATHOLE_SCRIPT" ]; then
     # Remove the existing rathole
@@ -1193,7 +1311,8 @@ else
     echo -e "${YELLOW}$RATHOLE_SCRIPT does not exist in $DEST_DIR. No need to remove.${NC}"
 fi
 echo ''
-# Download the new rathole.sh from the GitHub URL
+
+# Download the new iPmart.sh from the GitHub URL
 echo -e "${CYAN}Downloading the new $RATHOLE_SCRIPT from $SCRIPT_URL...${NC}"
 
 curl -s -L -o "$DEST_DIR/$RATHOLE_SCRIPT" "$SCRIPT_URL"
@@ -1213,6 +1332,7 @@ fi
 
 }
 
+# SYSCTL Optimization
 optimize_tcp() {
     echo -e "${BLUE}Optimizing TCP settings for better performance...${NC}"
 
@@ -1310,24 +1430,6 @@ enable_bbr() {
         echo -e "${GREEN}BBR enabled.${NC}"
     fi
 }
-
-# Main function to perform all optimizations
-optimize_network() {
-    optimize_tcp
-    enable_bbr
-}
-
-# Color codes
-Purple='\033[0;35m'
-Cyan='\033[0;36m'
-cyan='\033[0;36m'
-CYAN='\033[0;36m'
-YELLOW='\033[0;33m'
-White='\033[0;96m'
-RED='\033[0;31m'
-BLUE='\033[0;34m'
-MAGENTA='\033[0;35m'
-NC='\033[0m' # No Color 
 
 # Function to display menu
 display_menu() {
