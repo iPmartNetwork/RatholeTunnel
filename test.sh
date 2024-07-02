@@ -1446,7 +1446,7 @@ display_menu() {
     echo -e "${Cyan}6.  Add & remove cron-job reset timer"
     echo -e "${White}7.  Optimize the Network settings${NC}"
     echo -e "${Cyan}8.  Optimize the System Limits${NC}"
-    echo -e "${White}9. Fix TimeZone${NC}"
+    echo -e "${White}9.  Fix TimeZone${NC}"
     echo -e "${Cyan}10. update_script"
     echo -e "${White}0.  Exit"
     echo ''
