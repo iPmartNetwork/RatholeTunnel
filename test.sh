@@ -469,7 +469,7 @@ iran_server_configuration() {
     echo
 	
 	while true; do
-	    echo -ne "[*] Tunnel port: "
+	    echo -ne " Tunnel port: "
 	    read -r tunnel_port
 	
 	    if [[ "$tunnel_port" =~ ^[0-9]+$ ]] && [ "$tunnel_port" -gt 22 ] && [ "$tunnel_port" -le 65535 ]; then
@@ -679,7 +679,7 @@ kharej_server_configuration() {
     echo -ne " Number of your configs: " 
     read -r num_ports
     while ! [[ "$num_ports" =~ ^[0-9]+$ ]]; do
-        colorize red "Please enter a valid number."
+        colorize Purple "Please enter a valid number."
 	    echo -ne " Number of your configs: " 
 	    read -r num_ports
     done
@@ -711,7 +711,7 @@ kharej_server_configuration() {
 	# Keep prompting the user until a valid input is provided
 	while [[ "$transport" != "tcp" && "$transport" != "udp" ]]; do
 	    # Prompt the user to input transport type
-	    echo -ne "[*] Transport type (tcp/udp): " 
+	    echo -ne " Transport type (tcp/udp): " 
 	    read -r transport
 	
 	    # Check if the input is either tcp or udp
@@ -726,7 +726,7 @@ kharej_server_configuration() {
 	local nodelay=""
 	# Keep prompting the user until a valid input is provided
 	while [[ "$nodelay" != "true" && "$nodelay" != "false" ]]; do
-	    echo -ne "[*] TCP_NODELAY (true/false): " 
+	    echo -ne " TCP NODELAY (true/false): " 
 	    read -r nodelay
 	    if [[ "$nodelay" != "true" && "$nodelay" != "false" ]]; then
 	        colorize red "Invalid nodelay input. Please enter 'true' or 'false'"
@@ -737,7 +737,7 @@ kharej_server_configuration() {
 	echo -ne "[-] Security Token (press enter to use default value): "
 	read -r token
 	if [[ -z "$token" ]]; then
-		token="musixal"
+		token="iPmart"
 	fi
 
 	#Add IPv6 Support
