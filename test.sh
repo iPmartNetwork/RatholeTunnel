@@ -1431,6 +1431,18 @@ enable_bbr() {
     fi
 }
 
+# Color codes
+Purple='\033[0;35m'
+Cyan='\033[0;36m'
+cyan='\033[0;36m'
+CYAN='\033[0;36m'
+YELLOW='\033[0;33m'
+White='\033[0;96m'
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+MAGENTA='\033[0;35m'
+NC='\033[0m' # No Color 
+
 # Function to display menu
 display_menu() {
     clear
