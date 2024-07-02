@@ -28,12 +28,6 @@ install_dependencies() {
     echo -e "${BLUE}Updating package list...${NC}"
     sudo apt update -y
 
-    echo -e "${BLUE}Upgrading packages...${NC}"
-    sudo apt upgrade -y
-
-    echo -e "${BLUE}Installing sqlite3...${NC}"
-    sudo apt install -y sqlite3
-
     echo -e "${BLUE}Installing openssl...${NC}"
     sudo apt install -y openssl
 
