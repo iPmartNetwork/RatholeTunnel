@@ -1031,15 +1031,14 @@ restart_service() {
 
 # Function to add cron-tab job
 add_cron_job() {
-    local restart_time="$1"
-    local reset_path="$2"
-    local service_name="$3"
+    local reset_path=$1
+    local restart_time=$2
 
     # Save existing crontab to a temporary file
     crontab -l > /tmp/crontab.tmp
 
     # Append the new cron job to the temporary file
-    echo "$restart_time $reset_path #$service_name" >> /tmp/crontab.tmp
+    echo "$restart_time $reset_path # Added by rathole_script" >> /tmp/crontab.tmp
 
     # Install the modified crontab from the temporary file
     crontab /tmp/crontab.tmp
@@ -1048,70 +1047,125 @@ add_cron_job() {
     rm /tmp/crontab.tmp
 }
 delete_cron_job() {
-    echo
-    local service_name="$1"
-    
-    crontab -l | grep -v "#$service_name" | crontab -
-    rm -f "$config_dir/${service_name%.service}.sh" >/dev/null 2>&1
-    
-    colorize cyan "Cron job for $service_name deleted successfully." bold
-    sleep 2
+    # Delete all cron jobs added by this script
+    crontab -l | grep -v '# Added by rathole_script' | crontab -
+    rm -f /etc/reset.sh >/dev/null 2>&1
+    echo -e "${Cyan}Cron jobs added by this script have been deleted successfully.${NC}"
 }
 
-add_new_config(){
-    echo
-    colorize yellow "Under construction..." bold
-    sleep 1
 
+# Main function to add or delete cron job for restarting services
+cronjob_main() {
+     clear
+     # Prompt user for action
+    echo -e "Select an option: \n"
+    echo -e "${CYAN}1. Add a cron-job to restart a service${NC}\n"
+    echo -e "${Purple}2. Delete cron jobs added by this script${NC}\n"
+    read -p "Enter your choice: " action_choice
+    echo ''
+    # Validate user input
+    case $action_choice in
+        1)
+            add_cron_job_menu
+            ;;
+        2)
+            delete_cron_job
+            ;;
+        *)
+            echo -e "${Purple}Invalid choice. Please enter 1 or 2.${NC}"
+            return 1
+            ;;
+    esac
+    echo ''
+    read -p "Press Enter to continue..."
 }
 
 add_cron_job_menu() {
-    echo
-    service_name="$1"
-    
-    # Prompt user to choose a restart time interval
-    colorize cyan "Select the restart time interval:" bold
-    echo
-    echo "1. Every 30th minute"
-    echo "2. Every 1 hour"
-    echo "3. Every 2 hours"
-    echo "4. Every 4 hours"
-    echo "5. Every 6 hours"
-    echo "6. Every 12 hours"
-    echo "7. Every 24 hours"
-    echo
-    read -p "Enter your choice: " time_choice
-    # Validate user input for restart time interval
-    case $time_choice in
+    clear
+    # Prompt user to choose a service
+    echo -e "Select the service you want to restart:\n"
+    echo -e "${CYAN}1. Kharej service${NC}"
+    echo -e "${Cyan}2. IRAN service${NC}"
+    echo ''
+    read -p "Enter your choice: " service_choice
+    echo ''
+    # Validate user input
+    case $service_choice in
         1)
-            restart_time="*/30 * * * *"
+            service_name="$kharej_service_name"
             ;;
         2)
-            restart_time="0 * * * *"
-            ;;
-        3)
-            restart_time="0 */2 * * *"
-            ;;
-        4)
-            restart_time="0 */4 * * *"
-            ;;
-        5)
-            restart_time="0 */6 * * *"
-            ;;
-        6)
-            restart_time="0 */12 * * *"
-            ;;
-        7)
-            restart_time="0 0 * * *"
+            service_name="$iran_service_name"
             ;;
         *)
-            echo -e "${Purple}Invalid choice. Please enter a number between 1 and 7.${NC}\n"
+            echo -e "${Purple}Invalid choice. Please enter 1 or 2.${NC}"
             return 1
             ;;
     esac
 
+    # Prompt user to choose a restart time interval
+    echo "Select the restart time interval:"
+    echo ''
+    echo "1. Every 5 min"
+    echo "2. Every 10 min"
+    echo "3. Every 15 min"
+    echo "4. Every 20 min"
+    echo "5. Every 25 min"
+    echo "6. Every 30 min"
+    echo "7. Every 1 hour"
+    echo "8. Every 2 hours"
+    echo "9. Every 4 hours"
+    echo "10. Every 6 hours"
+    echo "11. Every 12 hours"
+    echo "12. Every 24 hours"
+    echo ''
+    read -p "Enter your choice: " time_choice
+    echo ''
+    # Validate user input for restart time interval
+    case $time_choice in
+        1)
+            restart_time="*/5 * * * *"
+            ;;
+        2)
+            restart_time="*/10 * * * *"
+            ;;
+        3)
+            restart_time="*/15 * * * *"
+            ;;
+        4)
+            restart_time="*/20 * * * *"
+            ;;
+        5)
+            restart_time="*/25 * * * *"
+            ;;
+        6)
+            restart_time="*/30 * * * *"
+            ;;
+        7)
+            restart_time="0 * * * *"
+            ;;
+        8)
+            restart_time="0 */2 * * *"
+            ;;
+        9)
+            restart_time="0 */4 * * *"
+            ;;
+        10)
+            restart_time="0 */6 * * *"
+            ;;
+        11)
+            restart_time="0 */12 * * *"
+            ;;
+        12)
+            restart_time="0 0 * * *"
+            ;;
+        *)
+            echo -e "${Purple}Invalid choice. Please enter a number between 1 and 12.${NC}\n"
+            return 1
+            ;;
+    esac
 
-    # remove cronjob created by this script
+    # remove cronjob created by thi script
     delete_cron_job > /dev/null 2>&1
     
     # Path ro reset file
@@ -1429,30 +1483,28 @@ display_menu() {
     echo -e "${White}3.  Destroy tunnel${NC}"
     echo -e "${Cyan}4.  Check tunnel status${NC}"
     echo -e "${White}5.  Restart services${NC}"
-    echo -e "${Cyan}6.  Add & remove cron-job reset timer"
-    echo -e "${White}7.  Optimize the Network settings${NC}"
-    echo -e "${Cyan}8.  Optimize the System Limits${NC}"
-    echo -e "${White}9.  Fix TimeZone${NC}"
-    echo -e "${Cyan}10. update_script"
-    echo -e "${White}0.  Exit"
+    echo -e "${cyan}6.  Optimize the Network settings${NC}"
+    echo -e "${White}7.  Optimize the System Limits${NC}"
+    echo -e "${Cyane}8.  Fix TimeZone${NC}"
+    echo -e "${White}9. update_script"
+    echo -e "${cyan}0.  Exit"
     echo ''
     echo "-------------------------------"
 }
 
 # Function to read user input
 read_option() {
-    read -p "Enter your choice [1-10]: " choice
+    read -p "Enter your choice [1-9]: " choice
     case $choice in
         1) download_and_extract_rathole ;;
         2) configure_tunnel ;;
         3) destroy_tunnel ;;
         4) check_tunnel_status ;;
         5) restart_services ;;
-        6) cronjob_main ;;
-        7) optimize_network;;
-        8) increase_user_limits;;
-        9) set_timezone;;
-        10) update_script ;;
+        6) optimize_network;;
+        7) increase_user_limits;;
+        8) set_timezone;;
+        9) update_script ;;
         0) exit 0 ;;
         *) echo -e "${Purple}Invalid option!${NC}" && sleep 1 ;;
     esac
