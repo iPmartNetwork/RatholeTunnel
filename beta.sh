@@ -1333,9 +1333,9 @@ display_menu() {
     echo -e "${Cyan}4.  Check tunnel status${NC}"
     echo -e "${White}5.  Restart services${NC}"
     echo -e "${Cyan}6.  Optimize the Network settings${NC}"
-    echo -e "${Cyan}7.  Fix TimeZone${NC}"
-    echo -e "${White}8.  update_script"
-    echo -e "${Cyan}0.  Exit"
+    echo -e "${white}7.  Fix TimeZone${NC}"
+    echo -e "${cyan}8.  update_script"
+    echo -e "${white}0.  Exit"
     echo ''
     echo "-------------------------------"
 }
