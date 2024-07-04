@@ -1331,7 +1331,7 @@ display_menu() {
     echo -e "${Cyan}2.  Configure tunnel${NC}"
     echo -e "${White}3.  Destroy tunnel${NC}"
     echo -e "${Cyan}4.  Optimize the Network settings${NC}"
-    echo -e "${white}5.  Fix TimeZone${NC}"
+    echo -e "${White}5.  Fix TimeZone${NC}"
     echo -e "${cyan}6.  update_script"
     echo -e "${white}0.  Exit"
     echo ''
