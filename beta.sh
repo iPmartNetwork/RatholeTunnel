@@ -1330,11 +1330,9 @@ display_menu() {
     echo -e "${White}1.  Install Rathole Core${NC}"
     echo -e "${Cyan}2.  Configure tunnel${NC}"
     echo -e "${White}3.  Destroy tunnel${NC}"
-    echo -e "${Cyan}4.  Check tunnel status${NC}"
-    echo -e "${White}5.  Restart services${NC}"
-    echo -e "${Cyan}6.  Optimize the Network settings${NC}"
-    echo -e "${white}7.  Fix TimeZone${NC}"
-    echo -e "${cyan}8.  update_script"
+    echo -e "${Cyan}4.  Optimize the Network settings${NC}"
+    echo -e "${white}5.  Fix TimeZone${NC}"
+    echo -e "${cyan}6.  update_script"
     echo -e "${white}0.  Exit"
     echo ''
     echo "-------------------------------"
@@ -1342,13 +1340,11 @@ display_menu() {
 
 # Function to read user input
 read_option() {
-    read -p "Enter your choice [1-8]: " choice
+    read -p "Enter your choice [1-6]: " choice
     case $choice in
         1) download_and_extract_rathole ;;
         2) configure_tunnel ;;
         3) destroy_tunnel ;;
-        4) check_tunnel_status ;;
-        5) restart_services ;;
         6) optimize_network;;
         7) set_timezone;;
         8) update_script ;;
