@@ -62,7 +62,12 @@ bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/ma
 
 ```
 
+نسخه آزمایشی
 
+```
+bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/main/beta.sh)
+
+```
 
 
 <p align="center">_____________________________________________________________________________________
