@@ -1345,9 +1345,9 @@ read_option() {
         1) download_and_extract_rathole ;;
         2) configure_tunnel ;;
         3) destroy_tunnel ;;
-        6) optimize_network;;
-        7) set_timezone;;
-        8) update_script ;;
+        4) optimize_network;;
+        5) set_timezone;;
+        6) update_script ;;
         0) exit 0 ;;
         *) echo -e "${Purple}Invalid option!${NC}" && sleep 1 ;;
     esac
