@@ -1322,7 +1322,7 @@ display_menu() {
     echo -e "${White}1.  Install Rathole Core${NC}"
     echo -e "${Cyan}2.  Configure tunnel${NC}"
     echo -e "${White}3.  Destroy tunnel${NC}"
-    echo -e "${Cyan}4. Check tunnel status${NC}"
+    echo -e "${Cyan}4.  Check tunnel status${NC}"
     echo -e "${White}5.  Optimize the Network settings${NC}"
     echo -e "${Cyan}6.  Fix TimeZone${NC}"
     echo -e "${White}7.  update_script"
