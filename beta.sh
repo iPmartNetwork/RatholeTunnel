@@ -77,12 +77,6 @@ install_dependencies() {
     echo -e "${BLUE}Updating package list...${NC}"
     sudo apt update -y
 
-    echo -e "${BLUE}Upgrading packages...${NC}"
-    sudo apt upgrade -y
-
-    echo -e "${BLUE}Installing sqlite3...${NC}"
-    sudo apt install -y sqlite3
-
     echo -e "${BLUE}Installing openssl...${NC}"
     sudo apt install -y openssl
 
@@ -100,8 +94,6 @@ install_dependencies() {
     sudo apt -y -q autoclean
     sudo apt -y clean
     sudo apt -q update
-    sudo apt -y upgrade
-    sudo apt -y full-upgrade
     sudo apt -y autoremove --purge
 }
 
