@@ -48,7 +48,6 @@ install_dependencies() {
     sudo apt -y -q autoclean
     sudo apt -y clean
     sudo apt -q update
-    sudo apt -y upgrade
     sudo apt -y autoremove --purge
 }
 
@@ -1332,12 +1331,11 @@ display_menu() {
     echo -e "${Cyan}4.  Check tunnel status${NC}"
     echo -e "${White}5.  Restart services${NC}"
     echo -e "${Cyan}6.  Add & remove cron-job reset timer"
-    echo -e "${White}7.  Port traffic monitoring"
-    echo -e "${Cyan}8.  Optimize the Network settings${NC}"
-    echo -e "${White}9.  Optimize the System Limits${NC}"
-    echo -e "${Cyan}10. Fix TimeZone${NC}"
-    echo -e "${White}11. update_script"
-    echo -e "${Cyan}0.  Exit"
+    echo -e "${White}7.  Optimize the Network settings${NC}"
+    echo -e "${Cyan}8.  Optimize the System Limits${NC}"
+    echo -e "${White}9. Fix TimeZone${NC}"
+    echo -e "${Cyan}10. update_script"
+    echo -e "${White}0.  Exit"
     echo ''
     echo "-------------------------------"
 }
@@ -1352,11 +1350,10 @@ read_option() {
         4) check_tunnel_status ;;
         5) restart_services ;;
         6) cronjob_main ;;
-        7) ports_monitor_menu ;;
-        8) optimize_network;;
-        9) increase_user_limits;;
-        10) set_timezone;;
-        11) update_script ;;
+        7) optimize_network;;
+        8) increase_user_limits;;
+        9) set_timezone;;
+        10) update_script ;;
         0) exit 0 ;;
         *) echo -e "${Purple}Invalid option!${NC}" && sleep 1 ;;
     esac
