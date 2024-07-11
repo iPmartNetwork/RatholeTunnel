@@ -326,7 +326,7 @@ download_and_extract_rathole() {
         exit 1
     fi
     if [[ "$ARCH" == "x86_64" ]]; then
-    	DOWNLOAD_URL='https://github.com/Musixal/rathole-tunnel/raw/main/rathole.zip'
+    	DOWNLOAD_URL='https://github.com/iPmartNetwork/RatholeTunnel/releases/download/v0.5.0/rathole-x86_64-unknown-linux-gnu.zip'
     fi
 
     if [ -z "$DOWNLOAD_URL" ]; then
@@ -342,7 +342,7 @@ download_and_extract_rathole() {
     echo -e "Extracting Rathole...\n"
     sleep 1
     unzip -q "$DOWNLOAD_DIR/rathole.zip" -d "$config_dir"
-    echo -e "${GREEN}Rathole installation completed.${NC}\n"
+    echo -e "${Cyan}Rathole installation completed.${NC}\n"
     chmod u+x ${config_dir}/rathole
     rm -rf "$DOWNLOAD_DIR"
 }
