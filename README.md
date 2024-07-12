@@ -32,15 +32,15 @@
 - در آپدیت جدید مصرف بهینه شده
 - امکان زمانبندی دقیقه ای اضافه شد .
 - نو دیلی اضافه شد ( باتشکر از موزیکسال عزیز )
-- برای استفاده از امکانات جدید نسخه نهایی را نصب کنید.
-- برای اپدیت اسکریپت قدیمی به جدید از گزینه 8 استفاده کنید.
+-
+
 
 
 
 ## نصب 
 
 
-نسخه پیشنهادی
+
 
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/main/iPmart.sh)
@@ -49,12 +49,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/ma
 
 
 
-نسخه قدیمی
 
-```
-bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/main/old.sh)
-
-```
 
 
 
