@@ -47,12 +47,6 @@ bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/ma
 
 ```
 
-نسخه الفا
-
-```
-bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/main/alpha.sh)
-
-```
 
 
 نسخه قدیمی
@@ -62,12 +56,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/ma
 
 ```
 
-نسخه آزمایشی
 
-```
-bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/main/beta.sh)
-
-```
 
 
 <p align="center">_____________________________________________________________________________________
@@ -77,7 +66,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/ipmartnetwork/RatholeTunnel/ma
 
  ## نحوه ی اجرای مجدد اسکریپت
 
- - با استفاده از گزینه 11 اسکریپت را آپدیت کنید و تنها با زدن خط دستوری زیر اسکریپت دوباره اجرا شود
+ - با استفاده از گزینه 5 اسکریپت را آپدیت کنید و تنها با زدن خط دستوری زیر اسکریپت دوباره اجرا شود
 
 ```
 rathole
