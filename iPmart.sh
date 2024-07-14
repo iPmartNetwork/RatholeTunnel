@@ -1290,6 +1290,7 @@ enable_bbr() {
         echo -e "${GREEN}BBR enabled.${NC}"
     fi
 }
+
 # System Limits Optimizations
 limits_optimizations() {
     echo
@@ -1313,25 +1314,53 @@ limits_optimizations() {
     sed -i '/ulimit -x/d' $PROF_PATH
     sed -i '/ulimit -s/d' $PROF_PATH
 
+
+    ## Add new ulimits
+    ## The maximum size of core files created.
     echo "ulimit -c unlimited" | tee -a $PROF_PATH
+
+    ## The maximum size of a process's data segment
     echo "ulimit -d unlimited" | tee -a $PROF_PATH
+
+    ## The maximum size of files created by the shell (default option)
     echo "ulimit -f unlimited" | tee -a $PROF_PATH
+
+    ## The maximum number of pending signals
     echo "ulimit -i unlimited" | tee -a $PROF_PATH
+
+    ## The maximum size that may be locked into memory
     echo "ulimit -l unlimited" | tee -a $PROF_PATH
+
+    ## The maximum memory size
     echo "ulimit -m unlimited" | tee -a $PROF_PATH
+
+    ## The maximum number of open file descriptors
     echo "ulimit -n 1048576" | tee -a $PROF_PATH
+
+    ## The maximum POSIX message queue size
     echo "ulimit -q unlimited" | tee -a $PROF_PATH
+
+    ## The maximum stack size
     echo "ulimit -s -H 65536" | tee -a $PROF_PATH
     echo "ulimit -s 32768" | tee -a $PROF_PATH
+
+    ## The maximum number of seconds to be used by each process.
     echo "ulimit -t unlimited" | tee -a $PROF_PATH
+
+    ## The maximum number of processes available to a single user
     echo "ulimit -u unlimited" | tee -a $PROF_PATH
+
+    ## The maximum amount of virtual memory available to the process
     echo "ulimit -v unlimited" | tee -a $PROF_PATH
+
+    ## The maximum number of file locks
     echo "ulimit -x unlimited" | tee -a $PROF_PATH
+
 
     echo 
     echo -e "${GREEN}System Limits are Optimized.${NC}"
     echo 
-    sleep 1.0
+    sleep 0.5
 }
 
 # Color codes
