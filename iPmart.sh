@@ -1331,7 +1331,7 @@ read_option() {
         3) tunnel_management ;;
         4) check_tunnel_status ;;
         5) update_script ;;
-        6) optimize_network;;
+        6) optimize_tcp;;
         0) exit 0 ;;
         *) echo -e "${RED} Invalid option!${NC}" && sleep 1 ;;
     esac
