@@ -1291,78 +1291,6 @@ enable_bbr() {
     fi
 }
 
-# System Limits Optimizations
-limits_optimizations() {
-    echo
-    echo -e "${YELLOW}Optimizing System Limits...${NC}"
-    echo 
-    sleep 0.5
-
-    ## Clear old ulimits
-    sed -i '/ulimit -c/d' $PROF_PATH
-    sed -i '/ulimit -d/d' $PROF_PATH
-    sed -i '/ulimit -f/d' $PROF_PATH
-    sed -i '/ulimit -i/d' $PROF_PATH
-    sed -i '/ulimit -l/d' $PROF_PATH
-    sed -i '/ulimit -m/d' $PROF_PATH
-    sed -i '/ulimit -n/d' $PROF_PATH
-    sed -i '/ulimit -q/d' $PROF_PATH
-    sed -i '/ulimit -s/d' $PROF_PATH
-    sed -i '/ulimit -t/d' $PROF_PATH
-    sed -i '/ulimit -u/d' $PROF_PATH
-    sed -i '/ulimit -v/d' $PROF_PATH
-    sed -i '/ulimit -x/d' $PROF_PATH
-    sed -i '/ulimit -s/d' $PROF_PATH
-
-
-    ## Add new ulimits
-    ## The maximum size of core files created.
-    echo "ulimit -c unlimited" | tee -a $PROF_PATH
-
-    ## The maximum size of a process's data segment
-    echo "ulimit -d unlimited" | tee -a $PROF_PATH
-
-    ## The maximum size of files created by the shell (default option)
-    echo "ulimit -f unlimited" | tee -a $PROF_PATH
-
-    ## The maximum number of pending signals
-    echo "ulimit -i unlimited" | tee -a $PROF_PATH
-
-    ## The maximum size that may be locked into memory
-    echo "ulimit -l unlimited" | tee -a $PROF_PATH
-
-    ## The maximum memory size
-    echo "ulimit -m unlimited" | tee -a $PROF_PATH
-
-    ## The maximum number of open file descriptors
-    echo "ulimit -n 1048576" | tee -a $PROF_PATH
-
-    ## The maximum POSIX message queue size
-    echo "ulimit -q unlimited" | tee -a $PROF_PATH
-
-    ## The maximum stack size
-    echo "ulimit -s -H 65536" | tee -a $PROF_PATH
-    echo "ulimit -s 32768" | tee -a $PROF_PATH
-
-    ## The maximum number of seconds to be used by each process.
-    echo "ulimit -t unlimited" | tee -a $PROF_PATH
-
-    ## The maximum number of processes available to a single user
-    echo "ulimit -u unlimited" | tee -a $PROF_PATH
-
-    ## The maximum amount of virtual memory available to the process
-    echo "ulimit -v unlimited" | tee -a $PROF_PATH
-
-    ## The maximum number of file locks
-    echo "ulimit -x unlimited" | tee -a $PROF_PATH
-
-
-    echo 
-    echo -e "${GREEN}System Limits are Optimized.${NC}"
-    echo 
-    sleep 0.5
-}
-
 # Color codes
 Purple='\033[0;35m'
 Cyan='\033[0;36m'
@@ -1388,15 +1316,14 @@ display_menu() {
     echo -e "${White} 4. Check tunnels status${NC}"
     echo -e "${cyan} 5. Update script${NC}"
     echo -e "${White} 6. Optimize the Network settings${NC}"
-    echo -e "${Cyan} 7. Optimize the System Limits${NC}"
-    echo -e "${White} 0. Exit${NC}"
+    echo -e "${Cyan} 0. Exit${NC}"
     echo
     echo "-------------------------------"
 }
 
 # Function to read user input
 read_option() {
-    read -p "Enter your choice [0-7]: " choice
+    read -p "Enter your choice [0-6]: " choice
     case $choice in
         1) download_and_extract_rathole ;;
         2) configure_tunnel ;;
@@ -1404,7 +1331,6 @@ read_option() {
         4) check_tunnel_status ;;
         5) update_script ;;
         6) optimize_network;;
-        7) increase_user_limits;;
         0) exit 0 ;;
         *) echo -e "${RED} Invalid option!${NC}" && sleep 1 ;;
     esac
