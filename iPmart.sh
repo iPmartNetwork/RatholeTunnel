@@ -1321,8 +1321,8 @@ display_menu() {
     echo -e "${cyan} 3. tunnel management${NC}"
     echo -e "${White} 4. Check tunnels status${NC}"
     echo -e "${cyan} 5. Update script${NC}"
-    echo -e "${White} 7.  Optimize the Network settings${NC}"
-    echo -e "${Cyan} 8.  Optimize the System Limits${NC}"
+    echo -e "${White} 7. Optimize the Network settings${NC}"
+    echo -e "${Cyan} 8. Optimize the System Limits${NC}"
     echo -e "${White} 0. Exit${NC}"
     echo
     echo "-------------------------------"
