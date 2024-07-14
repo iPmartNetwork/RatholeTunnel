@@ -1193,6 +1193,74 @@ fi
 
 }
 
+# Function for destroying tunnel
+destroy_tunnel() {
+    echo ''
+    echo -e "${YELLOW}Destroying tunnel...${NC}\n"
+    sleep 1
+    
+    # Prompt to confirm before removing Rathole-core directory
+    read -p "Are you sure you want to remove Rathole-core? (y/n): " confirm
+    echo ''
+    
+if [[ $confirm == [yY] ]]; then
+    if [[ -d "$config_dir" ]]; then
+        rm -rf "$config_dir"
+        echo -e "${Cyan}Rathole-core directory removed.${NC}\n"
+    else
+        echo -e "${Purple}Rathole-core directory not found.${NC}\n"
+    fi
+else
+    echo -e "${YELLOW}Rathole core removal canceled.${NC}\n"
+fi
+
+
+# Check if server.toml exists and delete it
+if [ -f "$iran_config_file" ]; then
+  rm -f "$iran_config_file"
+fi
+
+# Check if client.toml exists and delete it
+if ls $kharej_config_file 1> /dev/null 2>&1; then
+    for file in $kharej_config_file; do
+         rm -f $file
+    done
+fi
+
+    # remove cronjob created by thi script
+    delete_cron_job 
+    echo ''
+    # Stop and disable the client service if it exists
+    if [[ -f "$kharej_service_file" ]]; then
+        if systemctl is-active "$kharej_service_name" &>/dev/null; then
+            systemctl stop "$kharej_service_name"
+            systemctl disable "$kharej_service_name"
+        fi
+        rm -f "$kharej_service_file"
+    fi
+
+
+    # Stop and disable the Iran server service if it exists
+    if [[ -f "$iran_service_file" ]]; then
+        if systemctl is-active "$iran_service_name" &>/dev/null; then
+            systemctl stop "$iran_service_name"
+            systemctl disable "$iran_service_name"
+        fi
+        rm -f "$iran_service_file"
+    fi
+    
+    echo ''
+    # Reload systemd to read the new unit file
+    if systemctl daemon-reload; then
+        echo -e "Systemd daemon reloaded.\n"
+    else
+        echo -e "${Purple}Failed to reload systemd daemon. Please check your system configuration.${NC}"
+    fi
+    
+    echo -e "${Cyan}Tunnel destroyed successfully!${NC}\n"
+    read -p "Press Enter to continue..."
+}
+
 # Color codes
 Purple='\033[0;35m'
 Cyan='\033[0;36m'
@@ -1217,20 +1285,22 @@ display_menu() {
     echo -e "${cyan} 3. tunnel management${NC}"
     echo -e "${White} 4. Check tunnels status${NC}"
     echo -e "${cyan} 5. Update script${NC}"
-    echo -e "${White} 0. Exit${NC}"
+    echo -e "${White} 6. Destroy tunnel${NC}"
+    echo -e "${cyan} 0. Exit${NC}"
     echo
     echo "-------------------------------"
 }
 
 # Function to read user input
 read_option() {
-    read -p "Enter your choice [0-5]: " choice
+    read -p "Enter your choice [0-6]: " choice
     case $choice in
         1) download_and_extract_rathole ;;
         2) configure_tunnel ;;
         3) tunnel_management ;;
         4) check_tunnel_status ;;
         5) update_script ;;
+        6) destroy_tunnel ;;
         0) exit 0 ;;
         *) echo -e "${RED} Invalid option!${NC}" && sleep 1 ;;
     esac
