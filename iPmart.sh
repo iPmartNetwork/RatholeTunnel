@@ -1290,6 +1290,49 @@ enable_bbr() {
         echo -e "${GREEN}BBR enabled.${NC}"
     fi
 }
+# System Limits Optimizations
+limits_optimizations() {
+    echo
+    echo -e "${YELLOW}Optimizing System Limits...${NC}"
+    echo 
+    sleep 0.5
+
+    ## Clear old ulimits
+    sed -i '/ulimit -c/d' $PROF_PATH
+    sed -i '/ulimit -d/d' $PROF_PATH
+    sed -i '/ulimit -f/d' $PROF_PATH
+    sed -i '/ulimit -i/d' $PROF_PATH
+    sed -i '/ulimit -l/d' $PROF_PATH
+    sed -i '/ulimit -m/d' $PROF_PATH
+    sed -i '/ulimit -n/d' $PROF_PATH
+    sed -i '/ulimit -q/d' $PROF_PATH
+    sed -i '/ulimit -s/d' $PROF_PATH
+    sed -i '/ulimit -t/d' $PROF_PATH
+    sed -i '/ulimit -u/d' $PROF_PATH
+    sed -i '/ulimit -v/d' $PROF_PATH
+    sed -i '/ulimit -x/d' $PROF_PATH
+    sed -i '/ulimit -s/d' $PROF_PATH
+
+    echo "ulimit -c unlimited" | tee -a $PROF_PATH
+    echo "ulimit -d unlimited" | tee -a $PROF_PATH
+    echo "ulimit -f unlimited" | tee -a $PROF_PATH
+    echo "ulimit -i unlimited" | tee -a $PROF_PATH
+    echo "ulimit -l unlimited" | tee -a $PROF_PATH
+    echo "ulimit -m unlimited" | tee -a $PROF_PATH
+    echo "ulimit -n 1048576" | tee -a $PROF_PATH
+    echo "ulimit -q unlimited" | tee -a $PROF_PATH
+    echo "ulimit -s -H 65536" | tee -a $PROF_PATH
+    echo "ulimit -s 32768" | tee -a $PROF_PATH
+    echo "ulimit -t unlimited" | tee -a $PROF_PATH
+    echo "ulimit -u unlimited" | tee -a $PROF_PATH
+    echo "ulimit -v unlimited" | tee -a $PROF_PATH
+    echo "ulimit -x unlimited" | tee -a $PROF_PATH
+
+    echo 
+    echo -e "${GREEN}System Limits are Optimized.${NC}"
+    echo 
+    sleep 1.0
+}
 
 # Color codes
 Purple='\033[0;35m'
