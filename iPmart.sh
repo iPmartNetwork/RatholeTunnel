@@ -1291,12 +1291,6 @@ enable_bbr() {
     fi
 }
 
-# Main function to perform all optimizations
-optimize_network() {
-    optimize_tcp
-    enable_bbr
-}
-
 # Color codes
 Purple='\033[0;35m'
 Cyan='\033[0;36m'
@@ -1321,8 +1315,8 @@ display_menu() {
     echo -e "${cyan} 3. tunnel management${NC}"
     echo -e "${White} 4. Check tunnels status${NC}"
     echo -e "${cyan} 5. Update script${NC}"
-    echo -e "${White} 7. Optimize the Network settings${NC}"
-    echo -e "${Cyan} 8. Optimize the System Limits${NC}"
+    echo -e "${White} 6. Optimize the Network settings${NC}"
+    echo -e "${Cyan} 7. Optimize the System Limits${NC}"
     echo -e "${White} 0. Exit${NC}"
     echo
     echo "-------------------------------"
