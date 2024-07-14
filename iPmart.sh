@@ -1194,7 +1194,7 @@ fi
 }
 # SYSCTL Optimization
 optimize_tcp() {
-    echo -e "${Cyan}Optimizing TCP settings for better performance...${NC}"
+    echo -e "${BLUE}Optimizing TCP settings for better performance...${NC}"
 
     # Backup current sysctl settings
     sudo cp /etc/sysctl.conf /etc/sysctl.conf.backup
@@ -1263,16 +1263,16 @@ EOF'
     # Apply the new sysctl settings
     sudo sysctl -p
 
-    echo -e "${cyan}TCP settings optimized.${NC}"
+    echo -e "${GREEN}TCP settings optimized.${NC}"
 }
 
 # Function to enable BBR
 enable_bbr() {
-    echo -e "${red}Enabling BBR...${NC}"
+    echo -e "${BLUE}Enabling BBR...${NC}"
 
     # Check if BBR is already enabled
     if lsmod | grep -q bbr; then
-        echo -e "${cyan}BBR is already enabled.${NC}"
+        echo -e "${GREEN}BBR is already enabled.${NC}"
     else
         # Load the TCP BBR module
         sudo modprobe tcp_bbr
@@ -1287,10 +1287,15 @@ enable_bbr() {
         # Apply the new sysctl settings
         sudo sysctl -p
 
-        echo -e "${cyan}BBR enabled.${NC}"
+        echo -e "${GREEN}BBR enabled.${NC}"
     fi
 }
 
+# Main function to perform all optimizations
+optimize_network() {
+    optimize_tcp
+    enable_bbr
+}
 
 # Color codes
 Purple='\033[0;35m'
@@ -1316,8 +1321,8 @@ display_menu() {
     echo -e "${cyan} 3. tunnel management${NC}"
     echo -e "${White} 4. Check tunnels status${NC}"
     echo -e "${cyan} 5. Update script${NC}"
-    echo -e "${White}7.  Optimize the Network settings${NC}"
-    echo -e "${Cyan}8.  Optimize the System Limits${NC}"
+    echo -e "${White} 7.  Optimize the Network settings${NC}"
+    echo -e "${Cyan} 8.  Optimize the System Limits${NC}"
     echo -e "${White} 0. Exit${NC}"
     echo
     echo "-------------------------------"
