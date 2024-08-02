@@ -1285,22 +1285,20 @@ display_menu() {
     echo -e "${cyan} 3. tunnel management${NC}"
     echo -e "${White} 4. Check tunnels status${NC}"
     echo -e "${cyan} 5. Update script${NC}"
-    echo -e "${White} 6. Destroy tunnel${NC}"
-    echo -e "${cyan} 0. Exit${NC}"
+    echo -e "${White} 0. Exit${NC}"
     echo
     echo "-------------------------------"
 }
 
 # Function to read user input
 read_option() {
-    read -p "Enter your choice [0-6]: " choice
+    read -p "Enter your choice [0-5]: " choice
     case $choice in
         1) download_and_extract_rathole ;;
         2) configure_tunnel ;;
         3) tunnel_management ;;
         4) check_tunnel_status ;;
         5) update_script ;;
-        6) destroy_tunnel ;;
         0) exit 0 ;;
         *) echo -e "${RED} Invalid option!${NC}" && sleep 1 ;;
     esac
